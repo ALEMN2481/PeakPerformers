@@ -3,11 +3,13 @@ const cors = require("cors");
 const db = require("./config/database");
 const categoriasRoutes = require("./routes/categorias.routes");
 const app = express();
+const productosRoutes = require("./routes/productos.routes");
 
 // Configuraciones del servidor
 app.use(cors());
 app.use(express.json());
 app.use("/api/categorias", categoriasRoutes);
+app.use("/api/productos", productosRoutes);
 // Ruta principal de prueba
 app.get("/", (req, res) => {
     res.json({

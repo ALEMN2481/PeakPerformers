@@ -1,13 +1,20 @@
 const express = require("express");
-const db = require("../config/database");
-const router = express.Router();
+
 const {
     obtenerCategorias,
-    registrarCategoria
+    registrarCategoria,
+    modificarCategoria,
+    borrarCategoria
 } = require("../controllers/categorias.controller");
+
+const router = express.Router();
 
 router.get("/", obtenerCategorias);
 
-
 router.post("/", registrarCategoria);
+
+router.put("/:id", modificarCategoria);
+
+router.delete("/:id", borrarCategoria);
+
 module.exports = router;
