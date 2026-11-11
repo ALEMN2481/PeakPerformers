@@ -4,6 +4,7 @@ const db = require("./config/database");
 const categoriasRoutes = require("./routes/categorias.routes");
 const app = express();
 const productosRoutes = require("./routes/productos.routes");
+const inventarioRoutes = require("./routes/inventario.routes");
 
 // Configuraciones del servidor
 app.use(cors());
@@ -35,5 +36,6 @@ app.get("/api/test-db", async (req, res) => {
         });
     }
 });
+app.use("/api/inventario", inventarioRoutes);
 
 module.exports = app;
