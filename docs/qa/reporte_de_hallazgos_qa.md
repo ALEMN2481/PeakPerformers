@@ -47,3 +47,35 @@ Durante la auditoría de código realizada sobre el backend (`backend/src`) en l
 
 * **Estado:** Pendiente de corrección por Backend (`prog_1`).
 * **Criterio de Desbloqueo Ciclo 1:** Corrección de `BUG-001` y eliminación de `SEC-001`.
+
+# Reporte de Hallazgos de QA - Pre-Integración (Ciclo 1)
+
+**Estado:** Bloqueado para Pruebas de Integración  
+
+## 1. RESUMEN EJECUTIVO
+No es posible iniciar el Ciclo 1 de Pruebas de Integración debido a que:
+1. `prog_1` (Backend) no posee middleware de autenticación ni control de acceso por roles.
+2. `prog_2` (Frontend) funciona únicamente con datos estáticos en código y sin llamadas HTTP (sin fetch/axios).
+3. Existen incompatibilidades severas en las rutas de la API y en los nombres de campos entre ambas ramas.
+
+---
+
+## 2. HALLAZGOS EN FRONTEND (`prog_2`)
+
+### BUG-002: Ausencia de Control de Rutas y Sesión en Frontend (Bloqueante)
+* **Ubicación:** `frontend/src/App.jsx`, `frontend/src/components/AppLayout.jsx`
+* **Descripción:** La navegación por hash permite ingresar a cualquier vista (ej. `#/usuarios`) sin autenticación. El login no valida credenciales. El rol "Administrador" y el usuario "Juan Pablo" están fijos en código.
+
+### CON-001: Desacople de Contrato de Datos Frontend/Backend (Bloqueante para Integración)
+* **Nombres de Campos:**
+  * Frontend espera: `ub`, `minimo`, `activo`, `stock`
+  * Backend devuelve: `ubicacion_bodega`, `stock_minimo`, `estado`, `stock_actual`
+* **Rutas Inexistentes:** Frontend intenta conectar a `/api/auth/*` pero el backend no tiene ese prefijo implementado.
+* **Datos Descartados:** Frontend envía `motivo` en bajas y `documento` en movimientos, pero las tablas/endpoints del backend no soportan esos campos.
+
+---
+
+## 3. ACCIONES REQUERIDAS ANTES DEL MERGE EN STAGING
+1. **Juan Rentería (Backend):** Implementar middleware de roles y definir rutas `/api/auth`.
+2. **Juan Pablo (Frontend):** Renombrar propiedades del estado/componentes para alinearse con los nombres de la base de datos de `prog_1`.
+3. **Ambos:** Acordar el contrato de interfaz (JSON request/response) antes de realizar el Pull Request a `staging`.
