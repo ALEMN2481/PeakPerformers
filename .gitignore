@@ -1,0 +1,13 @@
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules/
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules/
+
+backend/.env
+backend/node_modules/
+*.code-workspace
+controlstock_parche_seguridad/
