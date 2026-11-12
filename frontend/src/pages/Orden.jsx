@@ -1,120 +1,48 @@
 import { useState } from 'react'
 import AppLayout from '../components/AppLayout'
 import { Badge, Tarjeta, Cabecera } from '../components/ui'
-import { IconoEnviar, IconoAlerta } from '../components/Iconos'
+import { IconoEnviar } from '../components/Iconos'
+import { api } from '../services/api'
+import { cop } from '../utils'
 
-const DETALLE = [
-  ['TOR-3812-G', 'Tornillo galvanizado 3/8', 300, 900],
-  ['TUE-12', 'Tuerca hexagonal 1/2', 200, 400],
-  ['ARA-12', 'Arandela plana 1/2', 400, 200],
-]
-const fmt = (n) => '$' + n.toLocaleString('es-CO')
-
+const CLAVE_BORRADOR = 'controlstock_borrador_compra'
+function leerBorrador() {
+  try { return JSON.parse(sessionStorage.getItem(CLAVE_BORRADOR) || 'null') }
+  catch { return null }
+}
 export default function Orden({ ir }) {
-  const [autorizada, setAutorizada] = useState(false)
-  const [motivo, setMotivo] = useState('Reposición de referencias bajo mínimo.')
+  const [borrador] = useState(leerBorrador)
+  const [motivo, setMotivo] = useState('Reposición de productos bajo mínimo')
+  const [creada, setCreada] = useState(null)
+  const [ocupado, setOcupado] = useState(false)
   const [error, setError] = useState('')
-  const [traza, setTraza] = useState([
-    ['21 oct 2026 · 09:45', 'Laura Méndez · ADM-001\nWEB-ADM-01', 'Borrador creado desde 3 excepciones'],
-    ['21 oct 2026 · 09:46', 'Laura Méndez · ADM-001\nWEB-ADM-01', 'En revisión · motivo: reposición de mínimos'],
-  ])
-  const total = DETALLE.reduce((s, d) => s + d[2] * d[3], 0)
-
-  const autorizar = () => {
-    if (!motivo.trim()) return setError('El motivo de aprobación es obligatorio')
-    // TODO: conectar con el backend (autorizar orden de compra)
-    setError(''); setAutorizada(true)
-    setTraza((t) => [...t, ['21 oct 2026 · 09:50', 'Laura Méndez · ADM-001\nWEB-ADM-01', `Autorizada · motivo: ${motivo.toLowerCase()}`]])
+  const crear = async () => {
+    if (!borrador || !motivo.trim()) return setError('La orden y su motivo son obligatorios.')
+    setOcupado(true); setError('')
+    try {
+      const r = await api('/ordenes-compra', { method: 'POST', body: {
+        id_proveedor: borrador.id_proveedor, total: borrador.total,
+        motivo: motivo.trim(), detalles: borrador.detalles.map(i => ({ id_producto: i.id_producto, cantidad: i.cantidad, costo_unitario: i.costo_unitario })),
+      } })
+      setCreada(r?.data ?? r ?? {}); sessionStorage.removeItem(CLAVE_BORRADOR)
+    } catch (ex) { setError(ex.message) } finally { setOcupado(false) }
   }
-
-  return (
-    <AppLayout pagina="orden" ir={ir}>
-      <Cabecera eyebrow="Operación / 21 octubre 2026" titulo="Orden de compra OC-2026-0188"
-        texto="Compra consolidada de ejemplo · Fijaciones Andinas · Creada el 21 oct 2026 a las 09:45.">
-      </Cabecera>
-      <div className="chips" style={{ marginTop: -8, marginBottom: 18 }}>
-        <Badge tono="verde" punto={false}>1 · Borrador consolidado</Badge>
-        <Badge tono={autorizada ? 'verde' : 'ambar'} punto={false}>2 · {autorizada ? 'Autorizada' : 'Pendiente de autorización'}</Badge>
-        <Badge tono={autorizada ? 'azul' : 'gris'} punto={false}>3 · Autorizada y enviada{autorizada ? '' : ' · sin completar'}</Badge>
-      </div>
-
-      <div className="fila-lateral">
-        <div className="col">
-          <Tarjeta titulo="Proveedor y entrega">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-              {[['Razón social', 'Fijaciones Andinas SAS'], ['Correo de pedidos', 'pedidos@fijacionesandinas.co'],
-                ['Entregar en', 'Ferretería Central · Sede Cali · FC-01'], ['Fecha solicitada', '23 oct 2026']].map(([k, v]) => (
-                <div key={k}><label className="ctl-et">{k}</label><input className="ctl" defaultValue={v} /></div>
-              ))}
-            </div>
-            <p style={{ fontSize: 9, color: 'var(--gris)', marginTop: 12 }}>Recepción: Andrés López · Bodega FC-01 · 08:00–16:00</p>
-          </Tarjeta>
-
-          <Tarjeta titulo="Detalle de compra" sinPadding>
-            <table className="tabla">
-              <thead><tr><th>SKU / producto</th><th>Cantidad</th><th>Costo unitario</th><th>Subtotal COP</th></tr></thead>
-              <tbody>
-                {DETALLE.map(([sku, nombre, cant, costo]) => (
-                  <tr key={sku}>
-                    <td><strong className="mono" style={{ fontSize: 10 }}>{sku}</strong><br /><strong>{nombre}</strong></td>
-                    <td>{cant} un.</td><td>{fmt(costo)}</td><td>{fmt(cant * costo)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 18px 6px' }}>
-              <strong style={{ fontSize: 11 }}>3 referencias · 900 unidades</strong>
-              <strong style={{ fontSize: 18 }}>{fmt(total)} COP</strong>
-            </div>
-            <p style={{ fontSize: 9, color: 'var(--gris)', padding: '0 18px 16px' }}>Total de cantidades × costo. Sin impuestos adicionales en este ejemplo.</p>
-          </Tarjeta>
-
-          <Tarjeta titulo="Trazabilidad de la orden" sinPadding>
-            <table className="tabla">
-              <thead><tr><th>Fecha / hora</th><th>Actor / dispositivo</th><th>Evento</th></tr></thead>
-              <tbody>
-                {traza.map(([f, a, e]) => (
-                  <tr key={f + e}>
-                    <td><strong>{f}</strong></td>
-                    <td style={{ whiteSpace: 'pre-line', color: 'var(--gris)' }}>{a}</td>
-                    <td style={{ color: 'var(--gris)' }}>{e}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Tarjeta>
-        </div>
-
-        <div className="col">
-          <Tarjeta titulo="Autorización administrativa">
-            <Badge tono={autorizada ? 'verde' : 'ambar'} punto={false}>{autorizada ? 'Autorizada' : 'Aún no autorizada'}</Badge>
-            <div className="campo-app" style={{ marginTop: 14 }}>
-              <label className="ctl-et">Motivo de aprobación *</label>
-              <input className="ctl" value={motivo} disabled={autorizada} onChange={(e) => setMotivo(e.target.value)} />
-              {error && <p className="error-app">{error}</p>}
-            </div>
-            <div className="aviso" style={{ marginBottom: 14 }}>
-              <IconoAlerta />
-              <div>
-                <strong>Sin envío al proveedor</strong>
-                Autorizar registra el evento y habilita el envío formal. Esta orden todavía no admite recepción.
-              </div>
-            </div>
-            <button className="btn btn--primario" disabled={autorizada} onClick={autorizar}><IconoEnviar /> Autorizar y enviar orden</button>
-            <button className="btn btn--ancho" style={{ marginTop: 10 }} onClick={() => ir('reabastecimiento')}>Volver al borrador</button>
-          </Tarjeta>
-
-          <Tarjeta titulo="Vista previa de notificación">
-            <p style={{ fontSize: 10, color: 'var(--gris)', marginBottom: 12 }}>PARA: pedidos@fijacionesandinas.co</p>
-            <strong style={{ fontSize: 11 }}>Solicitud de compra · OC-2026-0188</strong>
-            <p style={{ fontSize: 10, color: '#4b5560', lineHeight: 1.6, margin: '12px 0' }}>
-              Ferretería Central solicita 3 referencias por {fmt(total)} COP. Entrega requerida: 23 oct 2026, bodega FC-01.
-            </p>
-            <p style={{ fontSize: 10, color: '#4b5560', marginBottom: 12 }}>Adjunto: OC-2026-0188.pdf</p>
-            <Badge>Vista previa · No enviada</Badge>
-          </Tarjeta>
-        </div>
-      </div>
-    </AppLayout>
-  )
+  return <AppLayout pagina="orden" ir={ir}>
+    <Cabecera eyebrow="Compras / Revisión" titulo="Orden de compra" texto="El borrador es local hasta que confirmes y el backend guarde la orden." />
+    {!borrador ? <Tarjeta titulo="No hay borrador"><p>Debes seleccionar referencias en reabastecimiento para crear una orden.</p><button className="btn" onClick={() => ir('reabastecimiento')}>Ir a reabastecimiento</button></Tarjeta> : <>
+      <div className="chips" style={{ marginBottom: 18 }}><Badge tono={creada ? 'verde' : 'ambar'}>{creada ? 'Registrada en la API' : 'Pendiente de registrar'}</Badge></div>
+      <Tarjeta titulo="Proveedor y detalle" derecha={borrador.proveedor || `Proveedor ${borrador.id_proveedor}`} sinPadding>
+        <div className="tabla-wrap"><table className="tabla"><thead><tr><th>SKU</th><th>Producto</th><th>Cantidad</th><th>Costo unitario</th><th>Subtotal</th></tr></thead>
+          <tbody>{borrador.detalles.map(i => <tr key={i.id_producto}><td className="mono">{i.sku}</td><td>{i.nombre}</td><td>{i.cantidad}</td><td>{cop(i.costo_unitario)}</td><td>{cop(i.cantidad * i.costo_unitario)}</td></tr>)}</tbody>
+        </table></div><div className="pie-tabla"><strong>Total estimado: {cop(borrador.total)}</strong></div>
+      </Tarjeta>
+      <div style={{ marginTop: 16 }}><Tarjeta titulo="Registro de compra">
+        {creada ? <p className="exito-app" role="status">Orden guardada por el servidor. {creada.id_orden ? `Identificador: ${creada.id_orden}.` : ''} El envío al proveedor o la autorización posterior requieren funciones adicionales del backend.</p> : <>
+          <label className="ctl-et">Motivo / observaciones *</label><input className="ctl" value={motivo} maxLength="255" onChange={e => setMotivo(e.target.value)} />
+          {error && <p className="error-app" role="alert">{error}</p>}
+          <div className="acciones" style={{ marginTop: 14 }}><button className="btn btn--primario" disabled={ocupado} onClick={crear}><IconoEnviar /> {ocupado ? 'Registrando…' : 'Registrar orden en el servidor'}</button><button className="btn" onClick={() => ir('reabastecimiento')}>Volver a editar</button></div>
+        </>}
+      </Tarjeta></div>
+    </>}
+  </AppLayout>
 }

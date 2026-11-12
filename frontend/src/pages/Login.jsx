@@ -1,17 +1,30 @@
 import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import { IconoFlecha } from '../components/Iconos'
+import { api, saveSession, rememberUser, lastUser } from '../services/api'
 
 export default function Login({ ir }) {
-  const [usuario, setUsuario] = useState('')
+  const [usuario, setUsuario] = useState(lastUser)
   const [clave, setClave] = useState('')
   const [recordar, setRecordar] = useState(false)
 
-  const enviar = (e) => {
-    e.preventDefault()
-    // TODO: conectar con el backend (POST /api/auth/login)
-    ir('panel')
-    console.log('Login', { usuario, recordar })
+  const [cargando, setCargando] = useState(false)
+  const [error, setError] = useState('')
+  const enviar = async (e) => {
+    e.preventDefault(); setError(''); setCargando(true)
+    try {
+      const r = await api('/auth/login', { method: 'POST', auth: false,
+        body: { correo: usuario.trim(), contrasena: clave } })
+      const data = r?.data ?? r
+      const token = data?.token ?? data?.accessToken ?? data?.access_token
+      if (!token) throw Error('La API no devolvió un token de sesión. Hay que revisar la respuesta de /api/auth/login.')
+      const u = data?.usuario ?? data?.user ?? {}
+      saveSession({ token, usuario: { nombre: u.nombre ?? usuario, correo: u.correo ?? usuario,
+        id_rol: u.id_rol ?? u.rol?.id_rol, rol: u.nombre_rol ?? u.rol?.nombre_rol ?? u.rol ?? '' } })
+      rememberUser(recordar ? usuario.trim() : '')
+      ir('panel')
+    } catch (ex) { setError(ex.message) }
+    finally { setCargando(false) }
   }
 
   return (
@@ -39,7 +52,8 @@ export default function Login({ ir }) {
           <button type="button" className="enlace" onClick={() => ir('recuperar')}>Recuperar contraseña</button>
         </div>
 
-        <button className="boton" type="submit"><IconoFlecha /> Ingresar a mi espacio</button>
+        {error && <p className="error-app" role="alert">{error}</p>}
+        <button className="boton" type="submit" disabled={cargando}><IconoFlecha /> {cargando ? "Validando..." : "Ingresar a mi espacio"}</button>
       </form>
 
       <hr className="separador" />
@@ -49,14 +63,14 @@ export default function Login({ ir }) {
         <p>El sistema reconoce tu rol. No necesitas seleccionarlo ni solicitar permisos al ingresar.</p>
         <div className="roles">
           <small>Administrador · Cajero / Vendedor</small>
-          <small>Proveedor</small>
+          <small>Auxiliar de Bodega</small>
         </div>
       </div>
 
       <div className="caja-gris">
         <strong>¿Aún no tienes cuenta?</strong>
         <p>
-          Realiza tu registro al administrador de Ferretería Central.{' '}
+          Solicita al administrador tu cuenta de acceso.{' '}
           <button type="button" className="enlace enlace--naranja" onClick={() => ir('registro')}>Aquí</button>
         </p>
       </div>

@@ -1,3 +1,4 @@
+import { getSession, logout } from '../services/api'
 import {
   IconoLogo, IconoPanel, IconoEscaner, IconoCaja, IconoCamion, IconoUsuarios,
   IconoReloj, IconoEscudo, IconoAyuda, IconoCampana, IconoTienda,
@@ -17,6 +18,9 @@ const MENU = [
 const MIGAS = { orden: 'Reabastecimiento' }
 
 export default function AppLayout({ pagina, ir, children }) {
+  const user = getSession()?.usuario || {}
+  const rol = String(user.rol || (Number(user.id_rol) === 1 ? 'Administrador' : Number(user.id_rol) === 2 ? 'Cajero' : Number(user.id_rol) === 3 ? 'Bodega' : 'Usuario'))
+  const admin = rol.toLowerCase().includes('administrador') || Number(user.id_rol) === 1
   const activa = pagina === 'orden' ? 'reabastecimiento' : pagina
   const nombre = MENU.find((m) => m[0] === activa)?.[1]
 
@@ -28,13 +32,13 @@ export default function AppLayout({ pagina, ir, children }) {
         </div>
 
         <div className="side__sede">
-          <strong>Ferretería Central</strong>
-          <small>Sede Cali · FC-01</small>
+          <strong>Mi inventario</strong>
+          <small>Gestión de existencias</small>
         </div>
 
         <p className="side__titulo">Operación</p>
         <nav className="side__nav">
-          {MENU.map(([id, texto, Icono]) => (
+          {MENU.filter(([id]) => id !== 'usuarios' || admin).map(([id, texto, Icono]) => (
             <button key={id} className={id === activa ? 'activo' : ''} onClick={() => ir(id)}>
               <Icono /> {texto}
             </button>
@@ -43,24 +47,24 @@ export default function AppLayout({ pagina, ir, children }) {
 
         <div className="side__rol">
           <IconoEscudo />
-          <strong>Administrador</strong>
-          <p>Catálogo, finanzas y autorizaciones.</p>
+          <strong>{rol}</strong>
+          <p>Permisos verificados por el servidor.</p>
         </div>
 
-        <button className="side__ayuda" onClick={() => ir('login')}><IconoAyuda /> Ayuda operativa</button>
+        <button className="side__ayuda" onClick={() => { logout(); ir('login') }}><IconoAyuda /> Cerrar sesión</button>
       </aside>
 
       <div className="app__col">
         <header className="topbar">
           <span className="topbar__miga">
-            <IconoTienda /> FC-01 / {MIGAS[pagina] ?? nombre}
+            <IconoTienda /> ControlStock / {MIGAS[pagina] ?? nombre}
           </span>
           <div className="topbar__der">
-            <span className="badge badge--verde"><i />En línea</span>
+            <span className="badge badge--verde"><i />Sesión iniciada</span>
             <button className="topbar__campana" aria-label="Notificaciones"><IconoCampana /></button>
             <div className="topbar__usuario">
-              <div><strong>Juan Pablo</strong><small>Administrador</small></div>
-              <span className="avatar">JP</span>
+              <div><strong>{user.nombre || user.correo || "Usuario"}</strong><small>{rol}</small></div>
+              <span className="avatar">{String(user.nombre || "CS").split(" ").map(p => p[0]).slice(0,2).join("").toUpperCase()}</span>
             </div>
           </div>
         </header>

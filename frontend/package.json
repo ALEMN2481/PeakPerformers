@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:unit": "node --test tests/*.test.mjs",
+    "check:api": "node scripts-check-api.mjs"
   },
   "dependencies": {
     "react": "^19.3.1",

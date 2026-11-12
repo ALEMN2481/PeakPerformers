@@ -109,3 +109,13 @@ a { color: inherit; }
   .panel__texto { display: none; }
   .panel__titulo { font-size: 26px; margin-bottom: 0; }
 }
+/* Estados de red accesibles y consistentes entre pantallas */
+.api-estado,.api-error{padding:16px;margin:12px 0;border:1px solid #d9e1e8;border-radius:6px;background:#f7fafc;color:#44515e;font-size:12px}
+.api-error{background:#fff7f6;border-color:#f2c9c4;color:#9d2d20}
+.api-error p{margin:7px 0 12px}
+.api-error button{color:#2c3742}
+.api-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;margin:15px 0}
+.api-form label{display:flex;flex-direction:column;gap:7px;font-size:11px;font-weight:600}
+.api-form .ctl{width:100%}
+.api-form-actions{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap}
+@media(max-width:720px){.api-form{grid-template-columns:1fr}}

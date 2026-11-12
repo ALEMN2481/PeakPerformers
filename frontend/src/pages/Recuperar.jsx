@@ -1,15 +1,19 @@
 import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import { IconoFlecha, IconoVolver, IconoInfo } from '../components/Iconos'
+import { api } from '../services/api'
 
 export default function Recuperar({ ir }) {
   const [correo, setCorreo] = useState('')
   const [enviado, setEnviado] = useState(false)
+  const [cargando, setCargando] = useState(false)
+  const [error, setError] = useState('')
 
-  const enviar = (e) => {
-    e.preventDefault()
-    // TODO: conectar con el backend (POST /api/auth/recuperar)
-    setEnviado(true)
+  const enviar = async (e) => {
+    e.preventDefault(); setCargando(true); setError('')
+    try { await api('/auth/recuperar', { method: 'POST', auth: false, body: { correo: correo.trim() } }); setEnviado(true) }
+    catch (ex) { setError(ex.message) }
+    finally { setCargando(false) }
   }
 
   return (
@@ -18,14 +22,15 @@ export default function Recuperar({ ir }) {
       <p className="subtitulo">
         Ingresa el correo asociado a tu cuenta y te enviaremos las instrucciones para restablecer tu contraseña.
       </p>
-      {enviado && <p className="exito">Solicitud registrada. Falta conectar con el servidor para enviar el correo.</p>}
+      {enviado && <p className="exito">Solicitud aceptada por el servidor. Si la cuenta existe, recibirás las instrucciones.</p>}
 
+      {error && <p className="error-app" role="alert">{error}</p>}
       <form onSubmit={enviar}>
         <div className="campo">
           <label htmlFor="correo">Correo electrónico</label>
           <input id="correo" type="email" required value={correo} onChange={(e) => setCorreo(e.target.value)} />
         </div>
-        <button className="boton" type="submit"><IconoFlecha /> Enviar instrucciones</button>
+        <button className="boton" type="submit" disabled={cargando}><IconoFlecha /> Enviar instrucciones</button>
       </form>
 
       <p className="nota">
@@ -45,10 +50,10 @@ export default function Recuperar({ ir }) {
 
       <div className="caja-gris">
         <strong>¿Aún no tienes credenciales?</strong>
-        <p>Solicita tu invitación al administrador de Ferretería Central. No hay registro público ni autoasignación de roles.</p>
+        <p>Solicita tu invitación al administrador del sistema. No hay registro público ni autoasignación de roles.</p>
       </div>
 
-      <p className="bloque" style={{ marginTop: 16 }}><small>¿Necesitas ayuda? soporte@controlstock.co</small></p>
+
     </AuthLayout>
   )
 }

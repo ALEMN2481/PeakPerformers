@@ -1,141 +1,60 @@
 import { useState } from 'react'
 import AppLayout from '../components/AppLayout'
 import { Badge, Tarjeta, Cabecera, Stat } from '../components/ui'
-import { IconoFlecha, IconoClip } from '../components/Iconos'
+import { IconoClip } from '../components/Iconos'
+import Estado from '../components/Estado'
+import { useApiList } from '../hooks/useApiList'
+import { normalizarProducto } from '../services/api'
 import { cop, num } from '../utils'
 
-const INICIO = [
-  ['TOR-3812-G', 'Tornillo galvanizado 3/8', 'Fijaciones Andinas', 0, 100, 'un.', 900, 300, true],
-  ['TUE-12', 'Tuerca hexagonal 1/2', 'Fijaciones Andinas', 20, 100, 'un.', 400, 200, true],
-  ['ARA-12', 'Arandela plana 1/2', 'Fijaciones Andinas', 40, 200, 'un.', 200, 400, true],
-  ['BRO-HSS08', 'Broca HSS 8 mm', 'Herramientas Bogotá', 12, 20, 'un.', 4500, 20, false],
-  ['CAB-TH12', 'Cable THHN calibre 12', 'Electroinsumos SAS', 85, 100, 'm', 3200, 100, false],
-  ['LIJ-080', 'Lija al agua grano 80', 'Abrasivos del Centro', 0, 10, 'hojas', 600, 30, false],
-].map(([sku, nombre, prov, stock, minimo, unidad, costo, pedir, sel]) =>
-  ({ sku, nombre, prov, stock, minimo, unidad, costo, pedir, sel }))
-
+const CLAVE_BORRADOR = 'controlstock_borrador_compra'
 export default function Reabastecimiento({ ir }) {
-  const [items, setItems] = useState(INICIO)
+  const { items, loading, error, reload } = useApiList('/productos', ['productos'])
+  const proveedores = useApiList('/proveedores', ['proveedores'])
+  const faltantes = items.map(normalizarProducto).filter(p => p.activo && p.stock < p.minimo)
+  const [seleccion, setSeleccion] = useState({})
+  const [proveedorId, setProveedorId] = useState('')
   const [q, setQ] = useState('')
   const [excepcion, setExcepcion] = useState('todas')
-  const [proveedor, setProveedor] = useState('todos')
-
-  const cambiar = (sku, cambios) => setItems((is) => is.map((i) => (i.sku === sku ? { ...i, ...cambios } : i)))
-  const visibles = items.filter((i) => {
-    if (q && !`${i.sku} ${i.nombre}`.toLowerCase().includes(q.toLowerCase())) return false
-    if (excepcion === 'agotado' && i.stock !== 0) return false
-    if (excepcion === 'bajo' && i.stock === 0) return false
-    if (proveedor !== 'todos' && i.prov !== proveedor) return false
-    return true
-  })
-
-  const seleccion = items.filter((i) => i.sel)
-  const grupos = Object.entries(
-    seleccion.reduce((acc, i) => ({ ...acc, [i.prov]: [...(acc[i.prov] || []), i] }), {}),
-  )
-  const provs = [...new Set(items.map((i) => i.prov))]
-
-  return (
-    <AppLayout pagina="reabastecimiento" ir={ir}>
-      <Cabecera eyebrow="Operación / 21 octubre 2026" titulo="Reabastecimiento"
-        texto="Excepciones detectadas por stock mínimo y agotados. Revisa cantidades antes de consolidar." />
-
+  const [errorAccion, setErrorAccion] = useState('')
+  const proveedoresLista = proveedores.items.map(p => ({ id: p.id_proveedor ?? p.id, nombre: p.razon_social ?? p.nombre ?? 'Proveedor' }))
+  const visibles = faltantes.filter(p => `${p.sku} ${p.nombre}`.toLowerCase().includes(q.toLowerCase()) && (excepcion === 'todas' || (excepcion === 'agotado' ? p.stock === 0 : p.stock > 0)))
+  const elegidos = faltantes.filter(p => Number(seleccion[p.id]) > 0).map(p => ({
+    id_producto: p.id, sku: p.sku, nombre: p.nombre, cantidad: Number(seleccion[p.id]), costo_unitario: p.costo,
+  }))
+  const total = elegidos.reduce((s, p) => s + p.cantidad * p.costo_unitario, 0)
+  const preparar = () => {
+    if (!proveedorId) return setErrorAccion('Selecciona el proveedor al que se le realizará la compra.')
+    if (!elegidos.length) return setErrorAccion('Selecciona una cantidad mayor que cero en al menos un producto.')
+    if (elegidos.some(i => !i.costo_unitario || i.costo_unitario < 0)) return setErrorAccion('Cada producto seleccionado necesita un costo mayor que cero para crear la orden.')
+    sessionStorage.setItem(CLAVE_BORRADOR, JSON.stringify({ id_proveedor: Number(proveedorId), proveedor: proveedoresLista.find(p => String(p.id) === proveedorId)?.nombre,
+      detalles: elegidos, total }))
+    ir('orden')
+  }
+  return <AppLayout pagina="reabastecimiento" ir={ir}>
+    <Cabecera eyebrow="Inventario / Compras" titulo="Reabastecimiento" texto="Los productos bajo mínimo se calculan sobre el inventario real. Selecciona un proveedor y prepara una orden." />
+    <Estado loading={loading || proveedores.loading} error={error || proveedores.error} onRetry={() => { reload(); proveedores.reload() }}>
       <div className="stats stats--3">
-        <Stat etiqueta="Productos con atención" valor="24"><small>18 bajo mínimo · 6 agotados</small></Stat>
-        <Stat etiqueta="Compras por autorizar" valor="3"><small>Total contextual: $3.612.000 COP</small></Stat>
-        <Stat etiqueta="Selección actual" valor={`${seleccion.length} referencias`}>
-          <small>
-            {grupos.length === 0 ? 'Nada seleccionado' : grupos.length === 1 ? `Un proveedor · ${grupos[0][0]}` : `${grupos.length} proveedores`}
-          </small>
-        </Stat>
+        <Stat etiqueta="Referencias con atención" valor={faltantes.length}><small>{faltantes.filter(p => p.stock === 0).length} agotadas</small></Stat>
+        <Stat etiqueta="Seleccionadas" valor={elegidos.length}><small>{num(elegidos.reduce((s, p) => s + p.cantidad, 0))} unidades</small></Stat>
+        <Stat etiqueta="Valor estimado" valor={cop(total)}><small>Costos registrados en el catálogo</small></Stat>
       </div>
-
-      <Tarjeta titulo="Existencias que requieren atención">
-        <div className="filtros">
-          <div className="crece">
-            <label className="ctl-et">Buscar referencia</label>
-            <input className="ctl" placeholder="SKU, nombre o medida ferretera" value={q} onChange={(e) => setQ(e.target.value)} />
-          </div>
-          <div className="crece">
-            <label className="ctl-et">Excepción</label>
-            <select className="ctl" style={{ width: '100%' }} value={excepcion} onChange={(e) => setExcepcion(e.target.value)}>
-              <option value="todas">Todas</option><option value="agotado">Agotados</option><option value="bajo">Bajo mínimo</option>
-            </select>
-          </div>
-          <div className="crece">
-            <label className="ctl-et">Proveedor</label>
-            <select className="ctl" style={{ width: '100%' }} value={proveedor} onChange={(e) => setProveedor(e.target.value)}>
-              <option value="todos">Todos</option>{provs.map((p) => <option key={p}>{p}</option>)}
-            </select>
-          </div>
-        </div>
-
-        <div className="tabla-wrap">
-          <table className="tabla">
-            <thead><tr><th>Selección / referencia</th><th>Proveedor</th><th>Stock / mínimo</th><th>Faltante al mínimo</th><th>Cantidad a pedir</th><th>Estado</th></tr></thead>
-            <tbody>
-              {visibles.length === 0 && <tr><td colSpan="6" className="vacio">No hay referencias con esos filtros.</td></tr>}
-              {visibles.map((i) => (
-                <tr key={i.sku}>
-                  <td>
-                    <label style={{ display: 'flex', gap: 8, cursor: 'pointer' }}>
-                      <input type="checkbox" checked={i.sel} onChange={(e) => cambiar(i.sku, { sel: e.target.checked })} style={{ accentColor: 'var(--naranja)' }} />
-                      <span><strong className="mono" style={{ fontSize: 10 }}>{i.sku}</strong><br />{i.nombre}</span>
-                    </label>
-                  </td>
-                  <td>{i.prov}</td>
-                  <td>{i.stock} / {i.minimo} {i.unidad}</td>
-                  <td>{i.minimo - i.stock} {i.unidad}</td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <input className="ctl ctl--num" type="number" min="0" value={i.pedir}
-                        onChange={(e) => cambiar(i.sku, { pedir: Math.max(0, Number(e.target.value)) })} />
-                      <span style={{ fontSize: 10, color: 'var(--gris)' }}>{i.unidad}</span>
-                    </div>
-                  </td>
-                  <td><Badge tono={i.stock === 0 ? 'rojo' : 'ambar'} punto={false}>{i.stock === 0 ? 'Agotado' : 'Bajo mínimo'}</Badge></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="pie-tabla" style={{ padding: '14px 0 0' }}>
-          <span>Mostrando {visibles.length} de 24 referencias · Ajusta la cantidad a pedir en cada campo.</span>
-          <button className="btn">Siguiente <IconoFlecha /></button>
-        </div>
+      <Tarjeta titulo="Productos para reponer">
+        <div className="filtros"><input className="ctl crece" value={q} onChange={e => setQ(e.target.value)} placeholder="SKU o nombre" />
+          <select className="ctl" value={excepcion} onChange={e => setExcepcion(e.target.value)}><option value="todas">Todas las alertas</option><option value="agotado">Agotados</option><option value="bajo">Bajo mínimo</option></select></div>
+        <div className="tabla-wrap"><table className="tabla"><thead><tr><th>SKU / producto</th><th>Stock</th><th>Mínimo</th><th>Faltante</th><th>Costo unidad</th><th>Cantidad a pedir</th></tr></thead>
+          <tbody>{visibles.length === 0 && <tr><td colSpan="6" className="vacio">No hay referencias que cumplan estos filtros.</td></tr>}
+            {visibles.map(p => <tr key={p.id ?? p.sku}><td><strong className="mono">{p.sku}</strong><div>{p.nombre}</div></td><td>{p.stock}</td><td>{p.minimo}</td>
+              <td><Badge tono={p.stock === 0 ? 'rojo' : 'ambar'}>{num(p.minimo - p.stock)}</Badge></td><td>{cop(p.costo)}</td>
+              <td><input type="number" className="ctl ctl--num" min="0" step="0.001" aria-label={`Cantidad a pedir de ${p.sku}`} value={seleccion[p.id] ?? 0}
+                onChange={e => setSeleccion(s => ({ ...s, [p.id]: Math.max(0, Number(e.target.value) || 0) }))} /></td></tr>)}</tbody></table></div>
       </Tarjeta>
-
-      <div style={{ marginTop: 16 }}>
-        <Tarjeta titulo="Consolidación por proveedor">
-          <div className="tabla-wrap">
-            <table className="tabla">
-              <thead><tr><th>Proveedor</th><th>Referencias</th><th>Unidades</th><th>Subtotal COP</th></tr></thead>
-              <tbody>
-                {grupos.length === 0 && <tr><td colSpan="4" className="vacio">Selecciona referencias para consolidar.</td></tr>}
-                {grupos.map(([prov, lista]) => (
-                  <tr key={prov}>
-                    <td><strong>{prov}</strong></td>
-                    <td>{lista.length} seleccionadas</td>
-                    <td>{num(lista.reduce((s, i) => s + i.pedir, 0))}</td>
-                    <td>{cop(lista.reduce((s, i) => s + i.pedir * i.costo, 0))}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {grupos.map(([prov, lista]) => (
-            <p key={prov} style={{ fontSize: 10, color: 'var(--gris)', marginTop: 12 }}>
-              {lista.map((i) => `${num(i.pedir)} × ${cop(i.costo)}`).join(' + ')} = {cop(lista.reduce((s, i) => s + i.pedir * i.costo, 0))} COP
-            </p>
-          ))}
-          <div className="acciones" style={{ marginTop: 16 }}>
-            <button className="btn btn--primario" disabled={seleccion.length === 0} onClick={() => ir('orden')}>
-              <IconoClip /> Consolidar en orden de compra
-            </button>
-            <button className="btn" onClick={() => setItems((is) => is.map((i) => ({ ...i, sel: false })))}>Limpiar selección</button>
-          </div>
-        </Tarjeta>
-      </div>
-    </AppLayout>
-  )
+      <div style={{ marginTop: 16 }}><Tarjeta titulo="Preparar orden de compra">
+        <p style={{ color: 'var(--gris)', fontSize: 11, marginBottom: 12 }}>La base actual no asocia automáticamente proveedores con productos. El proveedor se elige al crear cada orden.</p>
+        <div className="api-form"><label>Proveedor *<select className="ctl" value={proveedorId} onChange={e => setProveedorId(e.target.value)}><option value="">Seleccionar proveedor</option>{proveedoresLista.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}</select></label>
+          <div className="api-form-actions"><button className="btn btn--primario" onClick={preparar} disabled={!elegidos.length}><IconoClip /> Revisar orden ({elegidos.length})</button><button className="btn" onClick={() => setSeleccion({})}>Limpiar</button></div></div>
+        {errorAccion && <p className="error-app" role="alert">{errorAccion}</p>}
+      </Tarjeta></div>
+    </Estado>
+  </AppLayout>
 }

@@ -34,7 +34,7 @@ export default function AuthLayout({ variante = 'historial', children }) {
           </div>
         </div>
 
-        <p className="panel__pie">ControlStock · Ferretería Central</p>
+        <p className="panel__pie">ControlStock · Gestión de inventarios</p>
       </aside>
 
       <main className="auth__main">

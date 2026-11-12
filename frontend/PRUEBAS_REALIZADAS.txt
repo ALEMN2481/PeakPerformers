@@ -1,0 +1,10 @@
+ControlStock frontend conectado - resultado de las comprobaciones locales
+
+- Análisis de sintaxis de archivos JS/JSX con compilador TypeScript: OK (sin errores de sintaxis).
+- Comprobación estática de nombres de importaciones locales: OK.
+- npm run test:unit: OK (5 pruebas aprobadas).
+- Instalación de dependencias / npm run build / npm run lint: NO VERIFICADOS, porque el entorno de generación no pudo conectarse con registry.npmjs.org (EAI_AGAIN).
+- Pruebas de punta a punta contra Express y MariaDB: NO REALIZADAS, ya que el ZIP proporcionado solo incluía frontend.
+
+Para verificar en el computador del equipo: npm ci && npm run test:unit && npm run lint && npm run build
+Después iniciar backend y npm run check:api y probar flujos de interfaz.
