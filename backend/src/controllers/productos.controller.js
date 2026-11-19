@@ -91,6 +91,7 @@ const validarId = (valor) => {
 // GET todos
 const obtenerProductos = async (req, res) => {
     try {
+        if (!req.usuario) return res.json(await servicio.listarProductosPublicos());
         res.json(await servicio.listarProductos());
     } catch (error) {
         manejarError(error, res);
@@ -106,7 +107,7 @@ const obtenerProducto = async (req, res) => {
     }
 
     try {
-        const producto = await servicio.buscarProducto(id);
+        const producto = await (req.usuario ? servicio.buscarProducto(id) : servicio.buscarProductoPublico(id));
 
         if (!producto) {
             return res.status(404).json({

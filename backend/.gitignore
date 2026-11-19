@@ -1,0 +1,9 @@
+# Archivos privados/locales
+.env
+.env.*
+!.env.example
+node_modules/
+*.log
+resultado-qa-*.json
+.coverage/
+coverage/

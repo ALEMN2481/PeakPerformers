@@ -1,14 +1,17 @@
 const router = require("express").Router();
-const { autenticar, soloAdministrador } = require("../middlewares/auth.middleware");
+const { autenticar, autenticarOpcional, soloAdministrador } = require("../middlewares/auth.middleware");
 const { obtenerProductos, obtenerProducto, registrarProducto, modificarProducto, borrarProducto } = require("../controllers/productos.controller");
 const { buscarProductos, alternativasProducto } = require("../controllers/busqueda.controller");
+const espec = require("../controllers/especificaciones.controller");
 
-router.use(autenticar);
-router.get("/", obtenerProductos);
-router.get("/buscar", buscarProductos); // Debe ir ANTES de /:id
+// Consultas públicas: se ocultan costos internos, nunca se aceptan cambios sin JWT.
+router.get("/", autenticarOpcional, obtenerProductos);
+router.get("/buscar", buscarProductos);
 router.get("/:id/alternativas", alternativasProducto);
-router.get("/:id", obtenerProducto);
-router.post("/", soloAdministrador, registrarProducto);
-router.put("/:id", soloAdministrador, modificarProducto);
-router.delete("/:id", soloAdministrador, borrarProducto);
+router.get("/:id/especificaciones", espec.consultar);
+router.put("/:id/especificaciones", autenticar, soloAdministrador, espec.reemplazar);
+router.get("/:id", autenticarOpcional, obtenerProducto);
+router.post("/", autenticar, soloAdministrador, registrarProducto);
+router.put("/:id", autenticar, soloAdministrador, modificarProducto);
+router.delete("/:id", autenticar, soloAdministrador, borrarProducto);
 module.exports = router;

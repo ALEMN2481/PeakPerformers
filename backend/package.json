@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "test": "node --test pruebas/unitarios.test.js pruebas/integral-contrato.test.js",
+    "check": "node scripts/verificar-sintaxis.js"
   },
   "keywords": [],
   "author": "",
