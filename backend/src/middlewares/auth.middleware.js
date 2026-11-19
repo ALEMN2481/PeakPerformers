@@ -60,4 +60,32 @@ const soloAdministrador = (req, res, next) => {
     next();
 };
 
-module.exports = { autenticar, soloAdministrador, nombreDelRol };
+// Permite GET público, pero valida el token si el cliente envía uno.
+const autenticarOpcional = (req, res, next) => {
+    if (!req.headers.authorization) return next();
+    return autenticar(req, res, next);
+};
+// El cajero vende y consulta; altas, modificaciones, compras y ajustes
+// permanecen restringidos al administrador.
+const puedeVender = (req, res, next) => {
+    const rol = String(req.usuario?.rol || "").toLowerCase();
+    if (rol !== "administrador" && rol !== "cajero") {
+        return res.status(403).json({ mensaje: "Acceso reservado a Cajero o Administrador" });
+    }
+    next();
+};
+const soloProveedor = (req, res, next) => {
+    if (String(req.usuario?.rol || '').trim().toLowerCase() !== 'proveedor') {
+        return res.status(403).json({ mensaje: 'Acceso reservado al Proveedor' });
+    }
+    next();
+};
+const puedeConsultarInventario = (req, res, next) => {
+    const rol = String(req.usuario?.rol || '').trim().toLowerCase();
+    if (!['administrador', 'cajero'].includes(rol)) {
+        return res.status(403).json({ mensaje: 'Acceso reservado al personal de la ferretería' });
+    }
+    next();
+};
+module.exports = { autenticar, autenticarOpcional, soloAdministrador, soloProveedor,
+    puedeVender, puedeConsultarInventario, nombreDelRol };

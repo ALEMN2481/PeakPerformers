@@ -1,11 +1,9 @@
 const router = require("express").Router();
-const { autenticar, soloAdministrador } = require("../middlewares/auth.middleware");
+const { autenticar, autenticarOpcional, soloAdministrador, puedeConsultarInventario } = require("../middlewares/auth.middleware");
 const { resumenInventario, consultarExistencias, consultarStockBajo, consultarMovimientos, crearMovimiento } = require("../controllers/inventario.controller");
-
-router.use(autenticar);
-router.get("/resumen", resumenInventario);
-router.get("/existencias", consultarExistencias);
-router.get("/stock-bajo", consultarStockBajo);
-router.get("/movimientos", consultarMovimientos);
-router.post("/movimientos", soloAdministrador, crearMovimiento);
+router.get("/resumen", autenticarOpcional, resumenInventario);
+router.get("/existencias", autenticar, puedeConsultarInventario, consultarExistencias);
+router.get("/stock-bajo", autenticar, puedeConsultarInventario, consultarStockBajo);
+router.get("/movimientos", autenticar, soloAdministrador, consultarMovimientos);
+router.post("/movimientos", autenticar, soloAdministrador, crearMovimiento);
 module.exports = router;

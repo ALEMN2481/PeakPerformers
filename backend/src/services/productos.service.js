@@ -93,7 +93,26 @@ const eliminarProducto = async (id) => {
     return resultado.affectedRows;
 };
 
+// Proyección pública: nunca expone precio_costo ni ubicación interna de bodega.
+const listarProductosPublicos = async () => {
+    const [filas] = await db.query(`SELECT p.id_producto, p.id_categoria, p.sku,
+        p.codigo_barras, p.nombre, p.descripcion, p.precio_venta, p.stock_actual,
+        p.unidad_medida, c.nombre_categoria FROM producto p
+        JOIN categoria c ON c.id_categoria=p.id_categoria
+        WHERE p.estado=1 ORDER BY p.nombre`);
+    return filas;
+};
+const buscarProductoPublico = async (id) => {
+    const [filas] = await db.query(`SELECT p.id_producto, p.id_categoria, p.sku,
+        p.codigo_barras, p.nombre, p.descripcion, p.precio_venta, p.stock_actual,
+        p.unidad_medida, c.nombre_categoria FROM producto p
+        JOIN categoria c ON c.id_categoria=p.id_categoria
+        WHERE p.id_producto=? AND p.estado=1`, [id]);
+    return filas[0] || null;
+};
+
 module.exports = {
+    listarProductosPublicos, buscarProductoPublico,
     listarProductos,
     buscarProducto,
     crearProducto,
