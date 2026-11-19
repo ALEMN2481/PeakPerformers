@@ -9,9 +9,12 @@ const fallo = (mensaje, status = 400) => {
 const listar = async () => {
     const [filas] = await db.query(`
         SELECT o.id_orden, o.id_proveedor, p.razon_social AS proveedor,
-               o.fecha_creacion, o.estado, o.total
+               o.fecha_creacion, o.estado, o.total,
+               cp.fecha_confirmacion,
+               CASE WHEN cp.id_orden IS NULL THEN 0 ELSE 1 END AS confirmada_proveedor
         FROM orden_compra o
         JOIN proveedor p ON p.id_proveedor = o.id_proveedor
+        LEFT JOIN confirmacion_proveedor cp ON cp.id_orden = o.id_orden
         ORDER BY o.id_orden DESC
     `);
     return filas;
@@ -19,9 +22,12 @@ const listar = async () => {
 
 const buscar = async (id) => {
     const [ordenes] = await db.query(`
-        SELECT o.*, p.razon_social AS proveedor
+        SELECT o.*, p.razon_social AS proveedor,
+               cp.fecha_confirmacion,
+               CASE WHEN cp.id_orden IS NULL THEN 0 ELSE 1 END AS confirmada_proveedor
         FROM orden_compra o
         JOIN proveedor p ON p.id_proveedor = o.id_proveedor
+        LEFT JOIN confirmacion_proveedor cp ON cp.id_orden = o.id_orden
         WHERE o.id_orden = ?
     `, [id]);
     if (!ordenes.length) return null;

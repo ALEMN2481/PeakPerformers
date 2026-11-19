@@ -74,4 +74,18 @@ const puedeVender = (req, res, next) => {
     }
     next();
 };
-module.exports = { autenticar, autenticarOpcional, soloAdministrador, puedeVender, nombreDelRol };
+const soloProveedor = (req, res, next) => {
+    if (String(req.usuario?.rol || '').trim().toLowerCase() !== 'proveedor') {
+        return res.status(403).json({ mensaje: 'Acceso reservado al Proveedor' });
+    }
+    next();
+};
+const puedeConsultarInventario = (req, res, next) => {
+    const rol = String(req.usuario?.rol || '').trim().toLowerCase();
+    if (!['administrador', 'cajero'].includes(rol)) {
+        return res.status(403).json({ mensaje: 'Acceso reservado al personal de la ferretería' });
+    }
+    next();
+};
+module.exports = { autenticar, autenticarOpcional, soloAdministrador, soloProveedor,
+    puedeVender, puedeConsultarInventario, nombreDelRol };

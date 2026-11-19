@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { autenticar, soloAdministrador } = require("../middlewares/auth.middleware");
 const c = require("../controllers/proveedores.controller");
 
-router.use(autenticar);
+router.use(autenticar, soloAdministrador);
 router.get("/", c.listar);
 router.get("/:id", c.obtener);
 router.post("/", soloAdministrador, c.registrar);

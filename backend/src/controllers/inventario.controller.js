@@ -12,7 +12,7 @@ const responderConsulta = (funcion) => async (req, res) => {
 const resumenInventario = async (req, res) => {
     try {
         const datos = await servicio.obtenerResumen();
-        if (!req.usuario) {
+        if (!["administrador", "cajero"].includes(req.usuario?.rol?.toLowerCase())) {
             const { total_productos, unidades_disponibles, productos_stock_bajo } = datos;
             return res.json({ total_productos, unidades_disponibles, productos_stock_bajo });
         }

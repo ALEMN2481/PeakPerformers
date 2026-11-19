@@ -91,7 +91,10 @@ const validarId = (valor) => {
 // GET todos
 const obtenerProductos = async (req, res) => {
     try {
-        if (!req.usuario) return res.json(await servicio.listarProductosPublicos());
+        if (req.usuario?.rol?.toLowerCase() !== "administrador" &&
+            req.usuario?.rol?.toLowerCase() !== "cajero") {
+            return res.json(await servicio.listarProductosPublicos());
+        }
         res.json(await servicio.listarProductos());
     } catch (error) {
         manejarError(error, res);
@@ -107,7 +110,8 @@ const obtenerProducto = async (req, res) => {
     }
 
     try {
-        const producto = await (req.usuario ? servicio.buscarProducto(id) : servicio.buscarProductoPublico(id));
+        const interno = ["administrador", "cajero"].includes(req.usuario?.rol?.toLowerCase());
+        const producto = await (interno ? servicio.buscarProducto(id) : servicio.buscarProductoPublico(id));
 
         if (!producto) {
             return res.status(404).json({
