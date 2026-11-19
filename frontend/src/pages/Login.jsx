@@ -2,6 +2,7 @@ import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import { IconoFlecha } from '../components/Iconos'
 import { api, saveSession, rememberUser, lastUser } from '../services/api'
+import { paginaInicial } from '../services/permisos'
 
 export default function Login({ ir }) {
   const [usuario, setUsuario] = useState(lastUser)
@@ -18,23 +19,23 @@ export default function Login({ ir }) {
       const data = r?.data ?? r
       const token = data?.token ?? data?.accessToken ?? data?.access_token
       if (!token) throw Error('La API no devolvió un token de sesión. Hay que revisar la respuesta de /api/auth/login.')
-      const u = data?.usuario ?? data?.user ?? {}
-      saveSession({ token, usuario: { nombre: u.nombre ?? usuario, correo: u.correo ?? usuario,
-        id_rol: u.id_rol ?? u.rol?.id_rol, rol: u.nombre_rol ?? u.rol?.nombre_rol ?? u.rol ?? '' } })
+      const perfil = await api('/auth/me', { token })
+      if (!perfil?.id_usuario || !perfil?.rol) throw Error('No se pudo verificar el rol con /api/auth/me.')
+      saveSession({ token, usuario: { ...perfil, nombre: perfil.nombre || usuario.trim(), correo: usuario.trim() } })
       rememberUser(recordar ? usuario.trim() : '')
-      ir('panel')
+      ir(paginaInicial(perfil))
     } catch (ex) { setError(ex.message) }
     finally { setCargando(false) }
   }
 
   return (
-    <AuthLayout variante="bodega">
-      <h2 className="titulo">Bienvenido a ControlStock</h2>
+    <AuthLayout>
+      <h2 className="titulo">Bienvenido a PeakPerformers</h2>
       <p className="subtitulo">Ingresa con las credenciales asignadas por tu administrador.</p>
 
       <form onSubmit={enviar}>
         <div className="campo">
-          <label htmlFor="usuario">Correo o nombre de usuario</label>
+          <label htmlFor="usuario">Correo electrónico</label>
           <input id="usuario" type="text" value={usuario} required autoComplete="username"
             onChange={(e) => setUsuario(e.target.value)} />
         </div>
@@ -49,7 +50,7 @@ export default function Login({ ir }) {
             <input type="checkbox" checked={recordar} onChange={(e) => setRecordar(e.target.checked)} />
             Recordar usuario
           </label>
-          <button type="button" className="enlace" onClick={() => ir('recuperar')}>Recuperar contraseña</button>
+          <button className="enlace" type="button" onClick={() => ir('recuperar')}>¿Olvidaste tu contraseña?</button>
         </div>
 
         {error && <p className="error-app" role="alert">{error}</p>}
@@ -62,8 +63,8 @@ export default function Login({ ir }) {
         <h3>Un acceso, el espacio que te corresponde</h3>
         <p>El sistema reconoce tu rol. No necesitas seleccionarlo ni solicitar permisos al ingresar.</p>
         <div className="roles">
-          <small>Administrador · Cajero / Vendedor</small>
-          <small>Auxiliar de Bodega</small>
+          <small>Administrador · Cajero</small>
+          <small>Proveedor · Acceso según configuración del backend</small>
         </div>
       </div>
 
@@ -71,7 +72,7 @@ export default function Login({ ir }) {
         <strong>¿Aún no tienes cuenta?</strong>
         <p>
           Solicita al administrador tu cuenta de acceso.{' '}
-          <button type="button" className="enlace enlace--naranja" onClick={() => ir('registro')}>Aquí</button>
+          <span className="enlace enlace--naranja">El registro público está deshabilitado.</span>
         </p>
       </div>
     </AuthLayout>

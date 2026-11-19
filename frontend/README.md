@@ -1,53 +1,88 @@
-# ControlStock · Frontend integrado (React + Vite)
+# PeakPerformers — Frontend React / Vite
 
-Esta carpeta contiene el frontend entregado por el diseñador, **conservando su apariencia**, pero reemplazando los datos de muestra y acciones simuladas por peticiones HTTP al backend Express.
+Entrega para el compañero de frontend. **Este archivo ZIP contiene solo `frontend/`**.
+Conserva los componentes, estilos, imágenes y estructura original. No cambia `backend/`,
+SQL, `.git`, ni credenciales. No se realizaron commits ni pushes.
 
-> **Estado real:** este ZIP contiene **solo el frontend**. No incluye el backend ni MariaDB. Las rutas de autenticación y categorías se basan en el avance documentado del proyecto; las rutas de productos, ventas, usuarios, movimientos, proveedores y órdenes se prepararon según el contrato definido en `CONTRATO_API.md`, pero requieren verificación/implementación contra el backend real antes de dar por terminada la integración.
+## Inicio en el computador (Windows)
 
-## Cómo ejecutarlo en Windows (PowerShell)
-
-1. Tener instalado **Node.js** y el backend de ControlStock con su MariaDB en funcionamiento.
-2. Abrir PowerShell dentro de esta carpeta `frontend`.
-3. Ejecutar:
+1. Conserva una copia de `PeakPerformers/frontend` antes de mezclar los cambios.
+2. Extrae esta carpeta en `PeakPerformers/frontend` sin tocar `backend/`.
+3. Inicia el backend **actual** con su `.env` y la base de datos MariaDB local en el
+   puerto 3307; verifica `http://localhost:3000/api/test-db`.
+4. Desde una terminal en `PeakPerformers/frontend`, ejecuta:
 
 ```powershell
 npm ci
 npm run dev
 ```
 
-4. Abrir la dirección que muestre Vite (normalmente `http://localhost:5173` o `http://localhost:5174`).
-5. El backend debe escuchar en `http://localhost:3000` y responder bajo `/api`. El proxy de Vite dirige peticiones de `/api` a ese puerto. La contraseña y el token **no** deben figurar en el código.
-6. Probar conexión y endpoints públicos sin credenciales:
+5. Abre la URL de Vite (normalmente `http://localhost:5173`). En otra terminal
+   ejecuta `npm run test:unit` y `npm run build`.
 
-```powershell
-Invoke-RestMethod http://localhost:3000/api/test-db
-Invoke-RestMethod http://localhost:3000/api/categorias
-```
+Vite redirige `/api` a `http://localhost:3000`. **Nunca** pongas la contraseña
+MariaDB, `JWT_SECRET` ni claves personales en `.env` del frontend.
 
-Si el backend usa una URL distinta, copiar `.env.example` a `.env` y cambiar `VITE_API_URL`. `VITE_API_URL` es una dirección pública visible en el navegador, **nunca** colocar credenciales ahí. Para producción ajustar CORS/servidor o servir frontend y backend desde el mismo origen.
+## Roles y funciones
 
-## Qué cambiamos
+| Rol según `GET /api/auth/me` | Pantallas autorizadas |
+|---|---|
+| Administrador | Panel, catálogo, movimientos, compras, recepción, proveedores, ventas, reportes, consulta avanzada |
+| Cajero | Panel de consulta, precios, existencias y mostrador de ventas |
+| Proveedor | Portal propio; requiere rutas de perfil y órdenes del backend más reciente |
 
-- **Servicios**: `src/services/api.js` centraliza `fetch`, token Bearer, errores de red, CSV y normalización de respuestas.
-- **Autenticación**: pantalla de login conectada a `POST /api/auth/login`; token almacenado por sesión o con opción «Recordar usuario»; redirección y cierre de sesión.
-- **Catálogo**: consulta productos/categorías, filtra, pagina, exporta CSV, envía altas, ediciones, inactivaciones y nuevas categorías.
-- **Panel**: estadísticas calculadas con productos reales; no presenta cifras ficticias de ventas.
-- **Mostrador**: carrito local y solicitud real de registro de venta; conserva carrito en caso de error.
-- **Movimientos**: consulta y registro de movimientos; actualiza la tabla al confirmar el backend.
-- **Reabastecimiento/órdenes**: calculan faltantes a partir de productos reales, permiten seleccionar proveedor, generan borrador local y crean la orden mediante API.
-- **Usuarios**: consulta y alta desde un rol administrador, con contraseña inicial (sin inventar envío de correo).
-- **Estados**: pantallas de carga, validación y errores del backend; ninguna operación se declara exitosa antes de una respuesta HTTP exitosa.
+La identidad se valida a través de JWT y consulta de perfil. No se asume que el
+rol con `id_rol = 3` sea Proveedor y no se permite acceder a módulos ajenos
+cambiando la URL. Los permisos **verdaderos** también deben aplicarse en el
+backend; ocultar botones en React no sustituye control de acceso del servidor.
 
-**Limitaciones importantes:** al faltar el código del backend no se pudo validar su formato exacto ni ejecutar pruebas con MariaDB. El frontend no genera permisos de seguridad: deben comprobarse en cada ruta del servidor. Crear una orden no implica automáticamente aprobarla ni enviarla por email. El almacenamiento de borradores y carrito es local, no una base de datos.
+## Operaciones integradas contra la API verificada
 
-## Comprobaciones
+- Login JWT: `POST /api/auth/login`, `GET /api/auth/me`.
+- Productos/categorías: lectura y CRUD autorizado; ficha técnica.
+- Búsqueda avanzada: `GET /api/productos/buscar?q=...&especificacion=...`;
+  alternativas: `GET /api/productos/:id/alternativas`. Ambas lecturas sin token.
+- Movimientos: `GET/POST /api/inventario/movimientos`.
+- Ventas: `POST /api/ventas` (el servidor valida existencias y descuenta stock).
+- Proveedores: `GET/POST /api/proveedores`.
+- Compras: `GET/POST /api/compras`, detalle `GET /api/compras/:id`, recepción
+  `POST /api/compras/:id/recibir` (aumenta stock después de recibir).
+- Abastecimiento y reportes: rutas documentadas en `CONTRATO_API.md`.
 
-```powershell
-npm run test:unit   # comprueba adaptadores, HTTP exitoso y errores
-npm run lint        # analiza estilo/reglas de React
-npm run build       # compila a /dist
-```
+## Importante: portal de usuario Proveedor
 
-En el entorno donde se generó este ZIP los tests unitarios (5) pasaron y se comprobó la sintaxis de los JSX. La instalación de npm/build no pudo completarse porque este entorno no tuvo acceso a `registry.npmjs.org`; **el build no se declara verificado**. Realizar `npm ci`, `npm run lint` y `npm run build` en tu equipo.
+Los avances más recientes del chat «Verificar estado Git» incluyen una migración
+`002_acceso_proveedor.sql` y una prueba HTTP exitosa del acceso del Proveedor,
+órdenes propias y confirmación sin alterar stock. **Pero los archivos exactos de
+esas nuevas rutas no vienen en el último ZIP de backend que tenemos en este chat**.
+Por esa razón no se han supuesto endpoints nuevos ni se ha usado la consulta
+administrativa global de compras desde el Proveedor.
 
-Consulta `CONTRATO_API.md` para revisar las rutas y los cuerpos esperados. Si la API real utiliza otros nombres o responde con formatos distintos, ajustar el adaptador en `src/services/api.js` y los métodos en las pantallas, no inventar datos de prueba.
+Se añadió `src/services/portalProveedor.js` y se completó la vista de perfil,
+órdenes, detalle y confirmación. Las consultas solo se activan después de
+configurar en `.env.local` las rutas **reales y revisadas** del backend más
+reciente. Ver `INTEGRACION_PROVEEDOR.md`.
+
+El backend anterior también carece de API de administración de usuarios. La
+pantalla `Usuarios` no crea cuentas ficticias ni intenta registrar usuarios.
+
+## Prueba manual de demostración
+
+1. Login Administrador; crear producto, confirmar stock inicial = 0.
+2. Registrar entrada y verificar que aumenta inventario.
+3. Login Cajero; comprobar menú restringido; vender unidades disponibles,
+   volver a consultar y verificar que el backend redujo stock.
+4. Login Administrador; crear proveedor, registrar una orden de compra,
+   confirmar que el stock **no cambia antes de recibir**; recibir compra y
+   comprobar nuevo stock; revisar detalle de la orden.
+5. Consultar indicadores y ventas por fechas en Reportes.
+6. Login Proveedor: después de configurar rutas exactas de la nueva API,
+   consultar solo sus pedidos y confirmar uno sin alterar existencias.
+
+## Validación de esta entrega
+
+- Pruebas locales: **21/21** con `npm run test:unit`.
+- Sintaxis: **32 archivos** JS/JSX/MJS parseados sin errores con TypeScript.
+- `npm run build` y llamadas reales al MariaDB de tu PC: **pendientes** porque
+  no se dispone aquí de la dependencia npm completa ni de tu servidor Windows.
+- Backend: **no modificado**.

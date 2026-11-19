@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api, listado } from '../services/api'
-export function useApiList(path, keys = []) {
+export function useApiList(path, keys = [], { publico = false } = {}) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -8,12 +8,12 @@ export function useApiList(path, keys = []) {
   const reload = useCallback(async (signal) => {
     setLoading(true); setError('')
     try {
-      const result = await api(path, { signal })
+      const result = await api(path, { signal, auth: !publico })
       if (!signal?.aborted) setItems(listado(result, keyList ? keyList.split('|') : []))
     } catch (e) {
       if (e.name !== 'AbortError' && !signal?.aborted) { setItems([]); setError(e.message) }
     } finally { if (!signal?.aborted) setLoading(false) }
-  }, [path, keyList])
+  }, [path, keyList, publico])
   useEffect(() => {
     const controller = new AbortController(); reload(controller.signal)
     return () => controller.abort()

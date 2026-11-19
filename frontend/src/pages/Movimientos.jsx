@@ -7,7 +7,7 @@ import { useApiList } from '../hooks/useApiList'
 import { api, exportCsv, normalizarProducto } from '../services/api'
 
 export default function Movimientos({ ir }) {
-  const movimientos = useApiList('/movimientos', ['movimientos'])
+  const movimientos = useApiList('/inventario/movimientos', ['movimientos'])
   const productos = useApiList('/productos', ['productos'])
   const prods = productos.items.map(normalizarProducto)
   const [tipo, setTipo] = useState('todos')
@@ -24,7 +24,7 @@ export default function Movimientos({ ir }) {
     if (!form.id_producto || !(Number(form.cantidad) > 0) || !form.motivo.trim()) return setErrorAccion('Selecciona un producto, cantidad positiva y motivo.')
     setGuardando(true)
     try {
-      await api('/movimientos', { method: 'POST', body: { ...form, id_producto: Number(form.id_producto), cantidad: Number(form.cantidad), motivo: form.motivo.trim() } })
+      await api('/inventario/movimientos', { method: 'POST', body: { ...form, id_producto: Number(form.id_producto), cantidad: Number(form.cantidad), motivo: form.motivo.trim() } })
       setForm({ id_producto: '', tipo: 'Entrada', cantidad: '', motivo: '' })
       setOk('Movimiento registrado en el servidor.'); await Promise.all([movimientos.reload(), productos.reload()])
     } catch (ex) { setErrorAccion(ex.message) } finally { setGuardando(false) }
@@ -50,7 +50,7 @@ export default function Movimientos({ ir }) {
       <Estado loading={productos.loading} error={productos.error} onRetry={productos.reload}>
         <form onSubmit={guardar}><div className="api-form">
           <label>Producto *<select className="ctl" value={form.id_producto} onChange={e => setForm(f => ({ ...f, id_producto: e.target.value }))}><option value="">Selecciona un producto</option>{prods.filter(p => p.activo).map(p => <option key={p.id} value={p.id}>{p.sku} · {p.nombre} ({p.stock})</option>)}</select></label>
-          <label>Tipo *<select className="ctl" value={form.tipo} onChange={e => setForm(f => ({ ...f, tipo: e.target.value }))}><option>Entrada</option><option>Salida</option><option>Ajuste</option></select></label>
+          <label>Tipo *<select className="ctl" value={form.tipo} onChange={e => setForm(f => ({ ...f, tipo: e.target.value }))}><option>Entrada</option><option>Salida</option></select></label>
           <label>Cantidad *<input className="ctl" type="number" min="0.001" step="0.001" value={form.cantidad} onChange={e => setForm(f => ({ ...f, cantidad: e.target.value }))} /></label>
           <label>Motivo *<input className="ctl" maxLength="255" value={form.motivo} onChange={e => setForm(f => ({ ...f, motivo: e.target.value }))} /></label>
           <div className="api-form-actions"><button className="btn btn--primario" disabled={guardando} type="submit"><IconoCaja /> {guardando ? 'Guardando…' : 'Guardar movimiento'}</button></div>

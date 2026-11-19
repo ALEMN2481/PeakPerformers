@@ -1,7 +1,7 @@
 /* Único punto de comunicación con el backend Express.
    En desarrollo Vite envía /api a http://localhost:3000 (vite.config.js). */
 const BASE = (import.meta.env?.VITE_API_URL || '/api').replace(/\/$/, '')
-const SESSION_KEY = 'controlstock_sesion'
+const SESSION_KEY = 'peakperformers_sesion'
 const USER_KEY = 'controlstock_usuario_recordado'
 
 export function getSession() {
@@ -22,10 +22,10 @@ export function logout() {
 export class ApiError extends Error {
   constructor(message, status = 0) { super(message); this.name = 'ApiError'; this.status = status }
 }
-export async function api(path, { method = 'GET', body, signal, auth = true } = {}) {
+export async function api(path, { method = 'GET', body, signal, auth = true, token: tokenOverride } = {}) {
   const headers = { Accept: 'application/json' }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
-  const token = getSession()?.token
+  const token = tokenOverride ?? getSession()?.token
   if (auth && token) headers.Authorization = `Bearer ${token}`
   let response
   try {
@@ -41,7 +41,7 @@ export async function api(path, { method = 'GET', body, signal, auth = true } = 
   let payload
   try { payload = raw ? JSON.parse(raw) : null } catch { payload = null }
   if (!response.ok) {
-    if (response.status === 401 && auth) logout()
+    if (response.status === 401 && auth && !tokenOverride) logout()
     const message = payload?.mensaje || payload?.message || payload?.error || payload?.detalle
       || (response.status === 404 ? `El backend todavía no implementa ${method} ${path}.` : `Error del servidor (${response.status}).`)
     throw new ApiError(typeof message === 'string' ? message : 'No se pudo completar la solicitud.', response.status)
@@ -78,8 +78,8 @@ export function normalizarProducto(p) {
 }
 export const endpoints = {
   categorias: '/categorias', productos: '/productos', usuarios: '/usuarios',
-  proveedores: '/proveedores', movimientos: '/movimientos', ventas: '/ventas',
-  ordenes: '/ordenes-compra',
+  proveedores: '/proveedores', movimientos: '/inventario/movimientos', ventas: '/ventas',
+  ordenes: '/compras',
 }
 export function exportCsv(filename, headers, rows) {
   const esc = value => `"${String(value ?? '').replace(/"/g, '""')}"`
@@ -88,3 +88,5 @@ export function exportCsv(filename, headers, rows) {
   const link = document.createElement('a'); link.href = url; link.download = filename; link.click()
   URL.revokeObjectURL(url)
 }
+
+export { esAdministrador, puedeVender } from './permisos.js'

@@ -12,20 +12,29 @@ function leerBorrador() {
 }
 export default function Orden({ ir }) {
   const [borrador] = useState(leerBorrador)
-  const [motivo, setMotivo] = useState('Reposición de productos bajo mínimo')
+
   const [creada, setCreada] = useState(null)
+  const [recibida, setRecibida] = useState(false)
   const [ocupado, setOcupado] = useState(false)
   const [error, setError] = useState('')
   const crear = async () => {
-    if (!borrador || !motivo.trim()) return setError('La orden y su motivo son obligatorios.')
+    if (!borrador) return setError('La orden es obligatoria.')
     setOcupado(true); setError('')
     try {
-      const r = await api('/ordenes-compra', { method: 'POST', body: {
-        id_proveedor: borrador.id_proveedor, total: borrador.total,
-        motivo: motivo.trim(), detalles: borrador.detalles.map(i => ({ id_producto: i.id_producto, cantidad: i.cantidad, costo_unitario: i.costo_unitario })),
+      const r = await api('/compras', { method: 'POST', body: {
+        id_proveedor: borrador.id_proveedor, detalles: borrador.detalles.map(i => ({ id_producto: i.id_producto, cantidad: i.cantidad, costo_unitario: i.costo_unitario })),
       } })
       setCreada(r?.data ?? r ?? {}); sessionStorage.removeItem(CLAVE_BORRADOR)
     } catch (ex) { setError(ex.message) } finally { setOcupado(false) }
+  }
+  const recibir = async () => {
+    if (!creada?.id_orden || recibida) return
+    if (!window.confirm('¿Confirmas la recepción física de esta orden? Aumentará el stock y solo podrá realizarse una vez.')) return
+    setOcupado(true); setError('')
+    try {
+      const r = await api(`/compras/${creada.id_orden}/recibir`, { method: 'POST', body: {} })
+      setRecibida(r.estado === 'Recibida')
+    } catch (e) { setError(e.message) } finally { setOcupado(false) }
   }
   return <AppLayout pagina="orden" ir={ir}>
     <Cabecera eyebrow="Compras / Revisión" titulo="Orden de compra" texto="El borrador es local hasta que confirmes y el backend guarde la orden." />
@@ -37,8 +46,8 @@ export default function Orden({ ir }) {
         </table></div><div className="pie-tabla"><strong>Total estimado: {cop(borrador.total)}</strong></div>
       </Tarjeta>
       <div style={{ marginTop: 16 }}><Tarjeta titulo="Registro de compra">
-        {creada ? <p className="exito-app" role="status">Orden guardada por el servidor. {creada.id_orden ? `Identificador: ${creada.id_orden}.` : ''} El envío al proveedor o la autorización posterior requieren funciones adicionales del backend.</p> : <>
-          <label className="ctl-et">Motivo / observaciones *</label><input className="ctl" value={motivo} maxLength="255" onChange={e => setMotivo(e.target.value)} />
+        {creada ? <><p className="exito-app" role="status">Orden guardada por el servidor. {creada.id_orden ? `Identificador: ${creada.id_orden}.` : ''} {recibida ? ' La recepción aumentó el inventario.' : ' El inventario solo aumenta al recibir la compra.'}</p>{!recibida && <button className="btn btn--primario" disabled={ocupado} onClick={recibir}>Confirmar recepción de compra</button>}{error && <p className="error-app" role="alert">{error}</p>}</> : <>
+
           {error && <p className="error-app" role="alert">{error}</p>}
           <div className="acciones" style={{ marginTop: 14 }}><button className="btn btn--primario" disabled={ocupado} onClick={crear}><IconoEnviar /> {ocupado ? 'Registrando…' : 'Registrar orden en el servidor'}</button><button className="btn" onClick={() => ir('reabastecimiento')}>Volver a editar</button></div>
         </>}
