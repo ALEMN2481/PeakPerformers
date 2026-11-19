@@ -1,10 +1,23 @@
-ControlStock frontend conectado - resultado de las comprobaciones locales
+PeakPerformers — frontend actualizado para entrega al compañero
+Base inspeccionada: PeakPerformers_Frontend_Roles_Actualizado_19NOV2026.zip
+Contrato backend inspeccionado: PeakPerformers_Backend_Listo_Jueves(1).zip
+Alcance: únicamente carpeta frontend/; no backend, .env real, MariaDB ni Git.
 
-- Análisis de sintaxis de archivos JS/JSX con compilador TypeScript: OK (sin errores de sintaxis).
-- Comprobación estática de nombres de importaciones locales: OK.
-- npm run test:unit: OK (5 pruebas aprobadas).
-- Instalación de dependencias / npm run build / npm run lint: NO VERIFICADOS, porque el entorno de generación no pudo conectarse con registry.npmjs.org (EAI_AGAIN).
-- Pruebas de punta a punta contra Express y MariaDB: NO REALIZADAS, ya que el ZIP proporcionado solo incluía frontend.
+21/21 pruebas unitarias del frontend: APROBADAS
+32 archivos JavaScript/JSX/MJS parseados con TypeScript: SIN ERRORES SINTÁCTICOS
+npm ci --offline: NO TERMINADO; dependencia zod-validation-error-4.0.2.tgz
+                 ausente de caché (no se pudo ejecutar npm run build)
+Pruebas integradas con base de datos Windows: NO EJECUTADAS.
 
-Para verificar en el computador del equipo: npm ci && npm run test:unit && npm run lint && npm run build
-Después iniciar backend y npm run check:api y probar flujos de interfaz.
+Cambios visibles:
+- Proveedor: pantalla de perfil, órdenes propias, detalle y confirmación;
+  rutas protegidas configurables solo después de contrastarlas con backend nuevo.
+- Cajero: consulta avanzada por SKU, nombre, descripción y especificación;
+  alternativas según API pública sin acceso a costos internos.
+- Admin: detalle real de cada compra; flujo de recepción y ventas conservado.
+- Solo roles Administrador, Cajero y Proveedor; cualquier rol desconocido bloqueado.
+- No usar rutas globales de compras desde portal Proveedor.
+
+Para completar la conexión del proveedor, incluir de la versión más reciente:
+backend/src/app.js; backend/src/routes del portal; controller y service del
+portal; esquema real de respuestas. Ver INTEGRACION_PROVEEDOR.md.

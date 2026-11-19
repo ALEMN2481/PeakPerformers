@@ -8,7 +8,7 @@ import { api, normalizarProducto } from '../services/api'
 import { cop } from '../utils'
 
 export default function Mostrador({ ir }) {
-  const { items, loading, error, reload } = useApiList('/productos', ['productos'])
+  const { items, loading, error, reload } = useApiList('/productos', ['productos'], { publico: true })
   const productos = items.map(normalizarProducto).filter(p => p.activo)
   const [consulta, setConsulta] = useState('')
   const [lineas, setLineas] = useState([])
@@ -33,11 +33,11 @@ export default function Mostrador({ ir }) {
     if (!lineas.length) return setErrorVenta('Agrega productos a la venta.')
     setGuardando(true); setErrorVenta(''); setMensaje('')
     try {
-      await api('/ventas', { method: 'POST', body: {
+      const registrada = await api('/ventas', { method: 'POST', body: {
         documento_cliente: cliente.trim() || null, metodo_pago: pago,
-        detalles: lineas.map(l => ({ id_producto: l.id, cantidad: l.cant, precio_unitario: l.precio })),
+        detalles: lineas.map(l => ({ id_producto: l.id, cantidad: l.cant })),
       } })
-      setLineas([]); setCliente(''); setMensaje('Venta registrada correctamente por la API.'); await reload()
+      setLineas([]); setCliente(''); setMensaje(`Venta #${registrada.id_venta} confirmada por el servidor. Total cobrado: ${cop(registrada.total)}.`); await reload()
     } catch (ex) { setErrorVenta(ex.message) } finally { setGuardando(false) }
   }
   return <AppLayout pagina="mostrador" ir={ir}>
@@ -63,7 +63,7 @@ export default function Mostrador({ ir }) {
             <span>{cop(l.precio)} × {l.cant} = <strong>{cop(l.precio * l.cant)}</strong></span>
             <button className="enlace-fila" onClick={() => setLineas(ls => ls.filter(p => p.id !== l.id))}>Quitar</button></div>
         </div>)}
-        <div className="sub-total" style={{ margin: '15px 0' }}><span>Total a cobrar</span><strong>{cop(total)}</strong></div>
+        <div className="sub-total" style={{ margin: '15px 0' }}><span>Total estimado (el servidor confirma)</span><strong>{cop(total)}</strong></div>
         <div className="campo-app"><label className="ctl-et">Documento del cliente (opcional)</label><input className="ctl" value={cliente} onChange={e => setCliente(e.target.value)} /></div>
         <div className="campo-app"><label className="ctl-et">Método de pago</label><select className="ctl" style={{ width: '100%' }} value={pago} onChange={e => setPago(e.target.value)}><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option></select></div>
         {mensaje && <p className="exito-app" role="status">{mensaje}</p>}
