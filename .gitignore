@@ -1,13 +1,12 @@
+# Variables de entorno (se versiona solo .env.example)
 **/.env
 **/.env.*
 !**/.env.example
-**/node_modules/
-**/.env
-**/.env.*
-!**/.env.example
+
+# Dependencias
 **/node_modules/
 
-backend/.env
-backend/node_modules/
+# Herramientas locales
 *.code-workspace
+.serena/
 controlstock_parche_seguridad/
