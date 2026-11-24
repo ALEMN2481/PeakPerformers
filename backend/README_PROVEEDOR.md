@@ -11,7 +11,7 @@ Las órdenes y confirmaciones se consultan por el usuario autenticado (`req.usua
 | Rol | Puede hacer |
 | --- | --- |
 | Administrador | Gestionar proveedores, compras, recepción, productos e inventario |
-| Cajero | Registrar ventas y consultar existencias autorizadas |
+| Cajero | Registrar ventas, gestionar productos (alta, edición e inactivación) y consultar existencias autorizadas |
 | Proveedor | Consultar datos de su empresa, sus órdenes y confirmarlas |
 
 La confirmación hecha por el Proveedor **no cambia el estado `Pendiente` de la orden ni suma inventario**. El Administrador recibe físicamente la mercancía mediante el endpoint existente `POST /api/compras/:id/recibir` y entonces la orden pasa a `Recibida`.

@@ -9,7 +9,7 @@ Backend completo de catalogo/inventario para ferreteria. **No incluye frontend R
 ### Cambios destacados
 
 - **Ventas**: mapeo corregido al esquema real `venta.id_cajero`, `total_venta`, `metodo_pago` y `documento_cliente` (antes el backend esperaba erroneamente `id_usuario`). Las ventas descuentan stock, guardan detalle y movimientos dentro de una sola transaccion; stock insuficiente => HTTP 409 y rollback.
-- **Roles**: Administrador y Cajero pueden registrar ventas; el Cajero no puede crear/eliminar productos ni recibir compras. JWT sigue obligatorio para las rutas protegidas.
+- **Roles**: Administrador y Cajero pueden registrar ventas; el Cajero puede crear, actualizar e inactivar productos, pero no recibir compras ni crear órdenes a proveedores. JWT sigue obligatorio para las rutas protegidas.
 - **Productos/inventario**: GET `/api/productos` y `/api/inventario/resumen` visibles sin token, con campos financieros reservados a usuarios autenticados. Inventario completo y movimientos requieren token; cambiar stock requiere Administrador.
 - **Compras/proveedores**: registrar orden, recibir una sola vez y ajustar stock; mantenidos del backend aportado.
 - **Reabastecimiento**: vinculo producto-proveedor, informe de faltantes y ordenes por proveedor sin duplicar pendientes. Requiere SQL de migracion.

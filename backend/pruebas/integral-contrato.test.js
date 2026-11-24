@@ -24,8 +24,8 @@ function servidorFake({ errorCategoria = false } = {}) {
         const u = ruta.pathname;
         const auth = req.headers.authorization || '';
         const t = auth.slice(7);
-        const admin = t === 'admin-token';
-        const cajero = t === 'cajero-token';
+        const admin = t.startsWith('admin-token');
+        const cajero = t.startsWith('cajero-token');
         const enviar=(code,json)=>{res.writeHead(code,{'Content-Type':'application/json'}); res.end(JSON.stringify(json));};
         const ok=(j={})=>enviar(200,j), creado=(j={})=>enviar(201,j), fallo=(code,mensaje)=>enviar(code,{mensaje});
         if (u === '/api/estado') return ok({version:'entrega-2026-11-19'});
@@ -49,16 +49,28 @@ function servidorFake({ errorCategoria = false } = {}) {
             return ok(specs.get(i)||[]);
         }
         if (u === '/api/categorias' && req.method==='POST') return creado({id_categoria:errorCategoria?null:categoriaId++});
-        if (u === '/api/proveedores' && req.method==='POST') return creado({id_proveedor:proveedorId++});
+        if (u === '/api/proveedores' && req.method==='POST') return admin ? creado({id_proveedor:proveedorId++}) : fallo(403,'Prohibido');
         if (u === '/api/productos' && req.method==='POST') {
+            if (!admin && !cajero) return fallo(403,'Prohibido');
             const p={...datos,id_producto:++idProd,stock_actual:0}; productos.set(p.id_producto,p);return creado({id_producto:p.id_producto});
         }
         if (u.match(/^\/api\/productos\/\d+$/)) {
             const i=Number(u.split('/')[3]);const p=productos.get(i);
-            if(req.method==='DELETE') return admin ? ok({}) : fallo(403,'Prohibido');
+            if (req.method === 'PUT') {
+                if (!admin && !cajero) return fallo(403,'Prohibido');
+                if (!p) return fallo(404,'No existe');
+                Object.assign(p,datos);return ok({mensaje:'Producto actualizado'});
+            }
+            if (req.method === 'DELETE') {
+                if (!admin && !cajero) return fallo(403,'Prohibido');
+                if (!p) return fallo(404,'No existe');
+                productos.delete(i);return ok({mensaje:'Producto desactivado'});
+            }
             return p ? ok(p) : fallo(404,'No existe');
         }
+        if (u === '/api/abastecimiento/generar' && req.method==='POST' && cajero) return fallo(403,'Prohibido');
         if(u==='/api/compras' && req.method==='POST') {
+            if (!admin) return fallo(403,'Prohibido');
             const o={id_orden:++idOrden,estado:'Pendiente',detalles:datos.detalles};ordenes.set(o.id_orden,o);return creado({id_orden:o.id_orden});
         }
         if(u.match(/^\/api\/compras\/\d+\/recibir$/)){

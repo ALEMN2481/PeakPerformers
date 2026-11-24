@@ -167,13 +167,30 @@ async function main() {
         asegurar(tablero.inventario && tablero.ordenes_por_estado,'Dashboard sin datos completos');
     });
     if (contrasenaCajero) {
-        await ejecutar('Cajero vende, pero no puede editar productos', async () => {
+        await ejecutar('Cajero registra, edita, inactiva y vende; compras restringidas', async () => {
             const login = await pedir('/auth/login', { metodo:'POST',
                 datos:{correo:correoCajero,contrasena:contrasenaCajero} });
             const t = login.token;
             const perfil = await pedir('/auth/me', {token:t});
             asegurar(String(perfil.rol).toLowerCase() === 'cajero', 'La cuenta adicional no es Cajero');
-            await pedir(`/productos/${proveedor.idProducto}`, {metodo:'DELETE',token:t,estado:403});
+            // Creamos un producto propio de QA para no inactivar el que usa la venta.
+            const datos = {id_categoria:proveedor.idCategoria, sku:`QA-CAJ-${sufijo}`,
+                nombre:`Tornillo QA Cajero ${sufijo}`, precio_costo:200,
+                precio_venta:350, stock_minimo:2, unidad_medida:'Unidad'};
+            const alta = await pedir('/productos', {metodo:'POST', token:t, estado:201, datos});
+            const idCajeroProducto = id(alta.id_producto,'id_producto de Cajero');
+            resultados.ids.id_producto_cajero = idCajeroProducto;
+            const actualizado = {...datos, nombre:`Tornillo Editado QA ${sufijo}`,precio_venta:400};
+            await pedir(`/productos/${idCajeroProducto}`, {metodo:'PUT', token:t, datos:actualizado});
+            const editado = await pedir(`/productos/${idCajeroProducto}`, {token:t});
+            asegurar(editado.nombre === actualizado.nombre && Number(editado.precio_venta) === 400,
+                'El Cajero no consiguió modificar el producto');
+            await pedir(`/productos/${idCajeroProducto}`, {metodo:'DELETE',token:t});
+            await pedir(`/productos/${idCajeroProducto}`, {token:t, estado:404});
+            // No dar acceso al Cajero para solicitar proveedores ni recibir compras.
+            await pedir('/compras', {metodo:'POST', token:t, datos:{}, estado:403});
+            await pedir('/abastecimiento/generar', {metodo:'POST',token:t,datos:{}, estado:403});
+            await pedir('/proveedores', {metodo:'POST',token:t,datos:{}, estado:403});
             const venta=await pedir('/ventas',{ metodo:'POST',token:t,estado:201,
                 datos:{detalles:[{id_producto:proveedor.idProducto,cantidad:1}],metodo_pago:'Tarjeta'} });
             id(venta.id_venta,'id_venta de Cajero');

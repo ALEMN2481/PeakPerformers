@@ -65,12 +65,20 @@ const autenticarOpcional = (req, res, next) => {
     if (!req.headers.authorization) return next();
     return autenticar(req, res, next);
 };
-// El cajero vende y consulta; altas, modificaciones, compras y ajustes
-// permanecen restringidos al administrador.
+// El Cajero puede vender; compras y ajustes quedan reservados al Administrador.
 const puedeVender = (req, res, next) => {
     const rol = String(req.usuario?.rol || "").toLowerCase();
     if (rol !== "administrador" && rol !== "cajero") {
         return res.status(403).json({ mensaje: "Acceso reservado a Cajero o Administrador" });
+    }
+    next();
+};
+// Operaciones de catálogo: Administrador y Cajero pueden registrar,
+// editar e inactivar productos; otras áreas mantienen sus permisos.
+const puedeGestionarProductos = (req, res, next) => {
+    const rol = String(req.usuario?.rol || "").trim().toLowerCase();
+    if (!["administrador", "cajero"].includes(rol)) {
+        return res.status(403).json({ mensaje: "Acceso reservado al personal de operaciones" });
     }
     next();
 };
@@ -88,4 +96,4 @@ const puedeConsultarInventario = (req, res, next) => {
     next();
 };
 module.exports = { autenticar, autenticarOpcional, soloAdministrador, soloProveedor,
-    puedeVender, puedeConsultarInventario, nombreDelRol };
+    puedeVender, puedeGestionarProductos, puedeConsultarInventario, nombreDelRol };
