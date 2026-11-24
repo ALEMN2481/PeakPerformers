@@ -28,8 +28,8 @@ MariaDB, `JWT_SECRET` ni claves personales en `.env` del frontend.
 | Rol según `GET /api/auth/me` | Pantallas autorizadas |
 |---|---|
 | Administrador | Panel, catálogo, movimientos, compras, recepción, proveedores, ventas, reportes, consulta avanzada |
-| Cajero | Panel de consulta, precios, existencias y mostrador de ventas |
-| Proveedor | Portal propio; requiere rutas de perfil y órdenes del backend más reciente |
+| Cajero | Panel, consulta de precios y existencias, ventas y **Gestión de productos (crear, editar, inactivar)**. Sin compras ni pedidos a proveedores. |
+| Proveedor | Portal propio con perfil, órdenes asignadas, detalle y confirmación mediante rutas privadas verificadas |
 
 La identidad se valida a través de JWT y consulta de perfil. No se asume que el
 rol con `id_rol = 3` sea Proveedor y no se permite acceder a módulos ajenos
@@ -49,19 +49,44 @@ backend; ocultar botones en React no sustituye control de acceso del servidor.
   `POST /api/compras/:id/recibir` (aumenta stock después de recibir).
 - Abastecimiento y reportes: rutas documentadas en `CONTRATO_API.md`.
 
-## Importante: portal de usuario Proveedor
+## Cambio de permisos informado el 23 de noviembre de 2026
 
-Los avances más recientes del chat «Verificar estado Git» incluyen una migración
-`002_acceso_proveedor.sql` y una prueba HTTP exitosa del acceso del Proveedor,
-órdenes propias y confirmación sin alterar stock. **Pero los archivos exactos de
-esas nuevas rutas no vienen en el último ZIP de backend que tenemos en este chat**.
-Por esa razón no se han supuesto endpoints nuevos ni se ha usado la consulta
-administrativa global de compras desde el Proveedor.
+El usuario confirmó que el backend actual (26 pruebas automatizadas aprobadas en su
+entorno) **autoriza al Cajero a crear, editar e inactivar productos**. En React, el
+menú Operaciones y las rutas se actualizaron para permitir acceso a `catalogo`
+para Administrador y Cajero. El formulario utiliza exclusivamente los endpoints
+ya documentados de productos: `POST /api/productos`, `PUT /api/productos/:id`
+y `DELETE /api/productos/:id` (baja lógica). El backend sigue siendo la fuente de
+verdad del permiso: si la API aún devuelve HTTP 403, no se debe intentar
+saltarse el permiso desde el cliente.
 
-Se añadió `src/services/portalProveedor.js` y se completó la vista de perfil,
-órdenes, detalle y confirmación. Las consultas solo se activan después de
-configurar en `.env.local` las rutas **reales y revisadas** del backend más
-reciente. Ver `INTEGRACION_PROVEEDOR.md`.
+Se reserva al Administrador: gestión de categorías, modificación de la ficha
+técnica, compras y proveedores, recepción, movimientos y reportes. El Cajero
+puede leer las fichas técnicas, pero no guardar cambios por un endpoint que no
+se ha verificado como suyo. El Proveedor no accede al catálogo ni a compras
+globales; su portal usa exclusivamente las rutas privadas verificadas en 6b2e660.
+
+**Limitación de verificación:** el ZIP de backend disponible en esta conversación
+es anterior al cambio del Cajero. Ese código exigía Administrador en
+`POST/PUT/DELETE /api/productos`. El portal Proveedor fue verificado después en el commit 6b2e660. Este ZIP no
+modifica backend y las pruebas unitarias **no equivalen** a una prueba HTTP contra MariaDB.
+
+## Portal de usuario Proveedor — integrado con backend 6b2e660
+
+Se verificaron directamente `backend/src/routes/portal-proveedor.routes.js`,
+`controllers/portal-proveedor.controller.js` y `services/portal-proveedor.service.js`.
+La pantalla `src/pages/PortalProveedor.jsx` llama de manera real a
+`GET /api/proveedor/mi-perfil`, `GET /api/proveedor/mis-ordenes`,
+`GET /api/proveedor/mis-ordenes/:id` y `POST /api/proveedor/mis-ordenes/:id/confirmar`.
+
+El acceso JWT se administra por `src/services/api.js`. Las órdenes se filtran en
+backend según `usuario_proveedor`, no desde React. No hay datos simulados;
+se presentan los estados Pendiente / Confirmada por el proveedor / Recibida
+por la ferretería. Confirmar NO aumenta existencias. No se usa `/api/compras`
+en el portal, ni se permite confirmar de nuevo una orden ya confirmada o recibida.
+
+No se necesitan variables `VITE_PROVEEDOR_*` de una integración anterior.
+Consultar `INTEGRACION_PROVEEDOR.md` para contrato completo y casos de prueba.
 
 El backend anterior también carece de API de administración de usuarios. La
 pantalla `Usuarios` no crea cuentas ficticias ni intenta registrar usuarios.
@@ -70,19 +95,20 @@ pantalla `Usuarios` no crea cuentas ficticias ni intenta registrar usuarios.
 
 1. Login Administrador; crear producto, confirmar stock inicial = 0.
 2. Registrar entrada y verificar que aumenta inventario.
-3. Login Cajero; comprobar menú restringido; vender unidades disponibles,
+3. Login Cajero; comprobar que puede crear/editar/inactivar productos y que **no** aparece Compras y proveedores; vender unidades disponibles,
    volver a consultar y verificar que el backend redujo stock.
 4. Login Administrador; crear proveedor, registrar una orden de compra,
    confirmar que el stock **no cambia antes de recibir**; recibir compra y
    comprobar nuevo stock; revisar detalle de la orden.
 5. Consultar indicadores y ventas por fechas en Reportes.
-6. Login Proveedor: después de configurar rutas exactas de la nueva API,
-   consultar solo sus pedidos y confirmar uno sin alterar existencias.
+6. Login Proveedor: consultar sus pedidos con JWT, abrir detalle y confirmar
+   uno pendiente sin alterar existencias; verificar recibido tras recepción administrativa.
 
 ## Validación de esta entrega
 
-- Pruebas locales: **21/21** con `npm run test:unit`.
-- Sintaxis: **32 archivos** JS/JSX/MJS parseados sin errores con TypeScript.
-- `npm run build` y llamadas reales al MariaDB de tu PC: **pendientes** porque
-  no se dispone aquí de la dependencia npm completa ni de tu servidor Windows.
-- Backend: **no modificado**.
+- Los tests `npm run test:unit` cubren rutas privadas, JWT, 3 estados,
+  detalles y confirmación (con respuestas HTTP simuladas), además del resto
+  de pruebas previas.
+- Comprobar también `npm run build` y, en el PC con el servidor MariaDB,
+  completar la prueba manual descrita en `INTEGRACION_PROVEEDOR.md`.
+- Backend y repositorio Git **no modificados**.

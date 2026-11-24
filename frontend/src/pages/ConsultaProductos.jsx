@@ -40,7 +40,7 @@ export default function ConsultaProductos({ ir }) {
   }
   return <AppLayout pagina="consulta" ir={ir}>
     <Cabecera eyebrow="Ventas / Consultas" titulo="Consultar productos"
-      texto="Consulta SKU, precios y existencias sin permisos de modificación. Búsqueda avanzada y alternativas provistas por la API." />
+      texto="Consulta SKU, precios y existencias. Si necesitas crear, editar o inactivar, entra a Gestión de productos." />
     <Tarjeta titulo="Precios y existencias" derecha={`${productos.length} productos`}>
       <form className="filtros" onSubmit={buscarAvanzado}>
         <input className="ctl crece" aria-label="Buscar producto" placeholder="SKU, nombre, código o descripción"
@@ -70,6 +70,9 @@ export default function ConsultaProductos({ ir }) {
         {alternativas.items.map(item => { const p = normalizarProducto(item); return <tr key={p.id}><td>{p.sku}</td><td>{p.nombre}</td><td>{p.stock}</td><td>{cop(p.precio)}</td></tr> })}
       </tbody></table></div>}
     </Tarjeta></div>}
-    <div style={{ marginTop: 16 }}><button className="btn btn--primario" onClick={() => ir('mostrador')}>Ir a registrar una venta</button></div>
+    <div className="acciones" style={{ marginTop: 16 }}>
+      <button className="btn btn--primario" onClick={() => ir('mostrador')}>Ir a registrar una venta</button>
+      <button className="btn" onClick={() => ir('catalogo')}>Gestionar productos</button>
+    </div>
   </AppLayout>
 }

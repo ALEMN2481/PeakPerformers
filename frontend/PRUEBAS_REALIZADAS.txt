@@ -21,3 +21,28 @@ Cambios visibles:
 Para completar la conexión del proveedor, incluir de la versión más reciente:
 backend/src/app.js; backend/src/routes del portal; controller y service del
 portal; esquema real de respuestas. Ver INTEGRACION_PROVEEDOR.md.
+
+
+ACTUALIZACIÓN 23/11/2026
+- 25 pruebas unitarias de frontend aprobadas (node --test tests/*.test.mjs).
+- Integradas comprobaciones nuevas de acceso al catálogo para Cajero y bloqueo de compras.
+- npm ci --offline no pudo instalar dependencias porque faltan paquetes en caché
+  (zod-validation-error 4.0.2). No se ha comprobado npm run build ni conexión
+  HTTP contra el backend más reciente / MariaDB en el PC del usuario.
+- Último backend disponible en esta conversación es anterior al cambio de permisos;
+  aún restringe productos al Administrador. La interfaz usa las rutas existentes,
+  pero su funcionalidad real depende de que el backend actual permita al Cajero.
+
+ACTUALIZACIÓN 24/11/2026 — PORTAL PROVEEDOR
+- Base de frontend: PeakPerformers_Frontend_Cajero_Productos_23NOV2026.zip.
+- Backend verificado mediante GitHub commit 6b2e660: rutas, controlador,
+  servicio, autenticación y registro en app.js.
+- Ahora están conectadas 4 rutas privadas de Proveedor sin configuraciones
+  manuales; detalle/confirmación reales, estados y datos de empresa.
+- 28/28 pruebas unitarias APROBADAS, incluyendo HTTP simulado con JWT Bearer,
+  confirmación POST, rechazo de 404/409 y ausencia de rutas administrativas.
+- 34 archivos JS/JSX/MJS parseados con TypeScript: SIN ERRORES.
+- npm ci no pudo completarse por dependencias faltantes/no accesibles;
+  npm run build no fue ejecutable en este entorno.
+- No se verificó el backend con MariaDB Windows; completar prueba en PC.
+- Solo archivos en frontend/. No hubo commits ni pushes.

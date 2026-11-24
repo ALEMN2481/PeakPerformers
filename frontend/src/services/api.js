@@ -72,6 +72,7 @@ export function normalizarProducto(p) {
     ub: p.ubicacion_bodega ?? p.ubicacion ?? '', unidad: p.unidad_medida ?? p.unidad ?? 'Unidad',
     stock: Number(p.stock_actual ?? p.stock ?? 0), minimo: Number(p.stock_minimo ?? p.minimo ?? 0),
     precio: Number(p.precio_venta ?? p.precio ?? 0), costo: Number(p.precio_costo ?? p.costo ?? 0),
+    costoDisponible: p.precio_costo !== undefined && p.precio_costo !== null || p.costo !== undefined && p.costo !== null,
     codigo_barras: p.codigo_barras ?? '', descripcion: p.descripcion ?? '',
     activo: ![0, false, '0', 'Inactivo', 'inactivo'].includes(p.estado ?? p.activo ?? 1),
   }

@@ -5,10 +5,15 @@ import { IconoBuscar, IconoMas, IconoDescargar } from '../components/Iconos'
 import Estado from '../components/Estado'
 import FichaTecnica from '../components/FichaTecnica'
 import { useApiList } from '../hooks/useApiList'
-import { api, exportCsv, normalizarCategoria, normalizarProducto } from '../services/api'
+import { api, getSession, exportCsv, normalizarCategoria, normalizarProducto } from '../services/api'
+import { puedeGestionarCategorias, puedeGestionarProductos, puedeEditarFichaTecnica } from '../services/permisos'
 
 const VACIO = { sku: '', nombre: '', id_categoria: '', codigo_barras: '', descripcion: '', precio_costo: '', precio_venta: '', stock_minimo: '0', unidad_medida: 'Unidad', ubicacion_bodega: '', estado: 1 }
 export default function Catalogo({ ir }) {
+  const usuario = getSession()?.usuario
+  const gestionaProductos = puedeGestionarProductos(usuario)
+  const gestionaCategorias = puedeGestionarCategorias(usuario)
+  const editaFicha = puedeEditarFichaTecnica(usuario)
   const prod = useApiList('/productos', ['productos'])
   const cat = useApiList('/categorias', ['categorias'])
   const productos = useMemo(() => prod.items.map(normalizarProducto), [prod.items])
@@ -41,8 +46,8 @@ export default function Catalogo({ ir }) {
   })
   const totalPag = Math.max(1, Math.ceil(filtrados.length / 20))
   const actuales = filtrados.slice((Math.min(pagina, totalPag) - 1) * 20, Math.min(pagina, totalPag) * 20)
-  const nuevo = () => { setCrearCat(false); setEditId(null); setForm({ ...VACIO }); setInactivar(null); setErrorAccion(''); setOk('') }
-  const editar = p => { setCrearCat(false); setEditId(p.id); setInactivar(null); setErrorAccion(''); setForm({
+  const nuevo = () => { if (!gestionaProductos) return; setCrearCat(false); setEditId(null); setForm({ ...VACIO }); setInactivar(null); setErrorAccion(''); setOk('') }
+  const editar = p => { if (!gestionaProductos) return; if (!p.costoDisponible) { setErrorAccion('El backend no entregó el costo de este producto. No se puede editar sin ese dato para evitar cambiarlo accidentalmente.'); return } setCrearCat(false); setEditId(p.id); setInactivar(null); setErrorAccion(''); setForm({
     sku: p.sku, nombre: p.nombre, id_categoria: p.id_categoria ?? '', codigo_barras: p.codigo_barras,
     descripcion: p.descripcion, precio_costo: p.costo, precio_venta: p.precio,
     stock_minimo: p.minimo, unidad_medida: p.unidad,
@@ -50,8 +55,9 @@ export default function Catalogo({ ir }) {
   }) }
   const guardar = async e => {
     e.preventDefault(); setErrorAccion(''); setOk('')
+    if (!gestionaProductos) return setErrorAccion('Tu cuenta no tiene permiso para gestionar productos.')
     if (!form.nombre.trim() || !form.sku.trim() || !form.id_categoria) return setErrorAccion('SKU, nombre y categoría son obligatorios.')
-    if (['precio_costo', 'precio_venta', 'stock_minimo'].some(k => !Number.isFinite(Number(form[k])) || Number(form[k]) < 0)) return setErrorAccion('Los precios y existencias deben ser números positivos o cero.')
+    if (['precio_costo', 'precio_venta', 'stock_minimo'].some(k => form[k] === '' || form[k] === null || !Number.isFinite(Number(form[k])) || Number(form[k]) < 0)) return setErrorAccion('Los precios y existencias deben ser números positivos o cero.')
     setOcupado(true)
     try {
       await api(editId ? `/productos/${editId}` : '/productos', {
@@ -64,7 +70,7 @@ export default function Catalogo({ ir }) {
     } catch (ex) { setErrorAccion(ex.message) } finally { setOcupado(false) }
   }
   const confirmarInactivo = async () => {
-
+    if (!gestionaProductos) return setErrorAccion('Tu cuenta no tiene permiso para inactivar productos.')
     setOcupado(true); setErrorAccion('')
     try {
       await api(`/productos/${inactivar.id}`, { method: 'DELETE' })
@@ -73,6 +79,7 @@ export default function Catalogo({ ir }) {
   }
   const guardarCategoria = async e => {
     e.preventDefault(); setErrorAccion(''); setOk('')
+    if (!gestionaCategorias) return setErrorAccion('Solo el Administrador puede crear categorías.')
     if (!nuevaCategoria.trim()) return setErrorAccion('Escribe el nombre de la categoría.')
     setOcupado(true)
     try {
@@ -83,11 +90,15 @@ export default function Catalogo({ ir }) {
   const filtro = setter => e => { setter(e.target.value); setPagina(1) }
 
   return <AppLayout pagina="catalogo" ir={ir}>
-    <Cabecera eyebrow="Inventario / Productos" titulo="Catálogo de productos" texto="Productos reales. El stock se modifica solo mediante movimientos o recepción de compras.">
-      <div className="acciones"><button className="btn" onClick={() => { setCrearCat(true); setForm(null); setInactivar(null); setErrorAccion('') }}>Nueva categoría</button><button className="btn btn--primario" onClick={nuevo}><IconoMas /> Nuevo producto</button></div>
+    <Cabecera eyebrow="Operaciones / Productos" titulo="Gestión de productos" texto="Crear, editar e inactivar productos con permisos del servidor. El stock se actualiza por ventas, movimientos o recepción de compras.">
+      <div className="acciones">
+        {gestionaCategorias && <button className="btn" onClick={() => { setCrearCat(true); setForm(null); setInactivar(null); setErrorAccion('') }}>Nueva categoría</button>}
+        {gestionaProductos && <button className="btn btn--primario" onClick={nuevo}><IconoMas /> Nuevo producto</button>}
+      </div>
     </Cabecera>
     <div className="chips" style={{ marginBottom: 18 }}><Badge tono="verde">{productos.filter(p => p.activo).length} activos</Badge><Badge>{productos.length} en catálogo</Badge></div>
     {ok && <p className="exito-app" role="status">{ok}</p>}
+    {errorAccion && !form && !inactivar && !crearCat && <p className="error-app" role="alert">{errorAccion}</p>}
     <Estado loading={prod.loading || cat.loading} error={prod.error || cat.error} onRetry={() => { prod.reload(); cat.reload() }}>
       <Tarjeta sinPadding className="mb">
         <div className="tarjeta__cuerpo" style={{ paddingBottom: 0 }}><div className="filtros">
@@ -101,18 +112,22 @@ export default function Catalogo({ ir }) {
           <tbody>{actuales.length === 0 && <tr><td colSpan="9" className="vacio">No hay productos con estos filtros.</td></tr>}{actuales.map(p => <tr key={p.id ?? p.sku}>
             <td className="mono">{p.sku}</td><td>{p.nombre}</td><td>{nombres[p.id_categoria] || p.categoria || '—'}</td><td>{p.ub || '—'}</td><td>{p.unidad}</td><td>{p.stock}</td><td>{p.minimo}</td>
             <td><Badge tono={p.activo ? 'verde' : 'gris'}>{p.activo ? 'Activo' : 'Inactivo'}</Badge></td>
-            <td><button className="enlace-fila" onClick={() => editar(p)}>Editar</button><button className="enlace-fila" onClick={() => { setFicha(p); setForm(null); setInactivar(null) }}>Ficha técnica</button>{p.activo && <button className="enlace-fila" onClick={() => { setInactivar(p); setForm(null); setErrorAccion('');  }}>Inactivar</button>}</td>
+            <td><div className="acciones">
+              {gestionaProductos && p.activo && <button className="enlace-fila" onClick={() => editar(p)}>Editar</button>}
+              <button className="enlace-fila" onClick={() => { setFicha(p); setForm(null); setInactivar(null) }}>Ficha técnica</button>
+              {gestionaProductos && p.activo && <button className="enlace-fila" onClick={() => { setInactivar(p); setForm(null); setErrorAccion('') }}>Inactivar</button>}
+            </div></td>
           </tr>)}</tbody></table></div>
         <div className="pie-tabla"><span>Mostrando {actuales.length} de {filtrados.length} productos</span><div className="acciones"><button className="btn" disabled={pagina <= 1} onClick={() => setPagina(n => n - 1)}>Anterior</button><span>Página {Math.min(pagina, totalPag)} de {totalPag}</span><button className="btn" disabled={pagina >= totalPag} onClick={() => setPagina(n => n + 1)}>Siguiente</button></div></div>
       </Tarjeta>
     </Estado>
-    {crearCat && <Tarjeta titulo="Nueva categoría">
+    {crearCat && gestionaCategorias && <Tarjeta titulo="Nueva categoría">
       <form onSubmit={guardarCategoria} className="api-form">
         <label>Nombre de categoría *<input className="ctl" maxLength="100" value={nuevaCategoria} onChange={e => setNuevaCategoria(e.target.value)} /></label>
         <div className="api-form-actions"><button className="btn btn--primario" type="submit" disabled={ocupado}>Guardar categoría</button><button className="btn" type="button" onClick={() => { setCrearCat(false); setErrorAccion('') }}>Cancelar</button></div>
       </form>{errorAccion && <p className="error-app" role="alert">{errorAccion}</p>}
     </Tarjeta>}
-    {form && <Tarjeta titulo={editId ? 'Editar producto' : 'Registrar producto'}>
+    {form && gestionaProductos && <Tarjeta titulo={editId ? 'Editar producto' : 'Registrar producto'}>
       <form onSubmit={guardar}><div className="api-form">
         {[
           ['sku', 'SKU *'], ['nombre', 'Nombre *'], ['codigo_barras', 'Código de barras'],
@@ -124,8 +139,8 @@ export default function Catalogo({ ir }) {
         <div className="api-form-actions"><button className="btn btn--primario" type="submit" disabled={ocupado}>{ocupado ? 'Guardando…' : 'Guardar producto'}</button><button type="button" className="btn" onClick={() => { setForm(null); setErrorAccion('') }}>Cancelar</button></div>
       </div>{errorAccion && <p className="error-app" role="alert">{errorAccion}</p>}</form>
     </Tarjeta>}
-    {ficha && <FichaTecnica key={ficha.id} producto={ficha} cerrar={() => setFicha(null)} />}
-    {inactivar && <Tarjeta titulo={`Inactivar ${inactivar.sku}`}><p>El producto se desactivará, conservando sus movimientos y ventas.</p>
+    {ficha && <FichaTecnica key={ficha.id} producto={ficha} soloLectura={!editaFicha} cerrar={() => setFicha(null)} />}
+    {inactivar && gestionaProductos && <Tarjeta titulo={`Inactivar ${inactivar.sku}`}><p>El producto se desactivará, conservando sus movimientos y ventas.</p>
       <p style={{ fontSize: 11 }}>Esta acción desactiva el producto sin eliminar su historial. El backend actual no registra un motivo de baja.</p>
       {errorAccion && <p className="error-app" role="alert">{errorAccion}</p>}
       <div className="acciones" style={{ marginTop: 12 }}><button className="btn btn--peligro" disabled={ocupado} onClick={confirmarInactivo}>Confirmar inactivación</button><button className="btn" onClick={() => { setInactivar(null); setErrorAccion('') }}>Cancelar</button></div>

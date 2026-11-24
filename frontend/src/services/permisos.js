@@ -11,10 +11,16 @@ export function esAdministrador(usuario) { return nombreRol(usuario) === ROLES.A
 export function esCajero(usuario) { return nombreRol(usuario) === ROLES.CAJERO }
 export function esProveedor(usuario) { return nombreRol(usuario) === ROLES.PROVEEDOR }
 export function puedeVender(usuario) { return esAdministrador(usuario) || esCajero(usuario) }
+// El permiso nuevo del Cajero cubre únicamente operaciones CRUD de PRODUCTOS.
+// Categorías, compras, proveedores, recepción, inventario manual y reportes siguen bajo Admin.
+export function puedeGestionarProductos(usuario) { return esAdministrador(usuario) || esCajero(usuario) }
+export function puedeGestionarCategorias(usuario) { return esAdministrador(usuario) }
+export function puedeGestionarCompras(usuario) { return esAdministrador(usuario) }
+export function puedeEditarFichaTecnica(usuario) { return esAdministrador(usuario) }
 
 export const PAGINAS_POR_ROL = Object.freeze({
   [ROLES.ADMINISTRADOR]: ['panel', 'catalogo', 'movimientos', 'reabastecimiento', 'orden', 'reportes', 'consulta', 'mostrador', 'usuarios'],
-  [ROLES.CAJERO]: ['panel', 'consulta', 'mostrador'],
+  [ROLES.CAJERO]: ['panel', 'consulta', 'mostrador', 'catalogo'],
   [ROLES.PROVEEDOR]: ['proveedor'],
 })
 
