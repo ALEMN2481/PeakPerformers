@@ -8,7 +8,20 @@ const responderConsulta = (funcion) => async (req, res) => {
     }
 };
 
-const resumenInventario = responderConsulta(servicio.obtenerResumen);
+// Sin JWT mostramos un resumen no financiero. Con JWT se devuelve el resumen completo.
+const resumenInventario = async (req, res) => {
+    try {
+        const datos = await servicio.obtenerResumen();
+        if (!["administrador", "cajero"].includes(req.usuario?.rol?.toLowerCase())) {
+            const { total_productos, unidades_disponibles, productos_stock_bajo } = datos;
+            return res.json({ total_productos, unidades_disponibles, productos_stock_bajo });
+        }
+        res.json(datos);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ mensaje: "Error al consultar el resumen" });
+    }
+};
 const consultarExistencias = responderConsulta(servicio.listarExistencias);
 const consultarStockBajo = responderConsulta(servicio.listarStockBajo);
 const consultarMovimientos = responderConsulta(servicio.listarMovimientos);
