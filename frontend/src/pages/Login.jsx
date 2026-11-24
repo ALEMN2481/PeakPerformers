@@ -64,7 +64,7 @@ export default function Login({ ir }) {
         <p>El sistema reconoce tu rol. No necesitas seleccionarlo ni solicitar permisos al ingresar.</p>
         <div className="roles">
           <small>Administrador · Cajero</small>
-          <small>Proveedor · Acceso según configuración del backend</small>
+          <small>Proveedor · Órdenes y confirmaciones</small>
         </div>
       </div>
 

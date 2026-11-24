@@ -1,51 +1,53 @@
-# Integración del acceso de usuario Proveedor — PeakPerformers
+# Integración final del portal Proveedor — PeakPerformers
 
-Este paquete conserva el diseño de React y conecta los módulos de Administrador
-/ Cajero con el contrato verificado en el backend adjuntado antes: `PeakPerformers_Backend_Listo_Jueves(1).zip`.
+## Contrato de backend verificado
 
-## Limitación real de fuentes
+Código fuente: rama `feature/proveedores-compras`, commit `6b2e660` de
+`ALEMN2481/PeakPerformers` (revisados los archivos de rutas, controlador y servicio).
+El frontend **NO** solicita datos desde `/api/compras` ni usa `id_proveedor` proporcionado
+por el navegador. Las consultas privadas usan el JWT, en `Authorization: Bearer TOKEN`.
 
-El backend de ese ZIP **no contiene** la migración `002_acceso_proveedor.sql`
-ni las nuevas rutas/controladores del portal Proveedor desarrolladas después en
-el chat «Verificar estado Git». Sabemos que se probó login JWT, perfil, órdenes
-filtradas y confirmación sin alterar stock, pero **no están disponibles aquí las
-rutas ni los formatos JSON exactos**. No los inventamos.
+| Acción | Método | Ruta | Respuesta real |
+|---|---|---|---|
+| Iniciar sesión | POST | `/api/auth/login` | `{ token, tipo, vence_en, mensaje }` |
+| Consultar rol | GET | `/api/auth/me` | `{ id_usuario, rol }` |
+| Perfil | GET | `/api/proveedor/mi-perfil` | `{ id_proveedor, nit_rut, razon_social, telefono, direccion, correo }` |
+| Órdenes | GET | `/api/proveedor/mis-ordenes` | Array de `{ id_orden, id_proveedor, fecha_creacion, estado, total, fecha_confirmacion, confirmada_proveedor }` |
+| Detalle | GET | `/api/proveedor/mis-ordenes/:id` | Orden con `{ proveedor, detalles: [{ id_producto, sku, producto, cantidad, costo_unitario, subtotal }] }` |
+| Confirmar | POST | `/api/proveedor/mis-ordenes/:id/confirmar` | `{ mensaje, id_orden, confirmada_proveedor, fecha_confirmacion, estado }` |
 
-## Conexión del portal cuando esté el backend definitivo
+`confirmada_proveedor` llega como 0/1 en consultas MariaDB y como `true` en
+la respuesta de confirmación. **Una confirmación NO cambia el estado físico** de
+la orden; si la compra continúa en `Pendiente` pero `confirmada_proveedor=1`,
+React muestra `Confirmada por el proveedor`. Solo muestra `Recibida por la
+ferretería` cuando el backend devuelve estado `Recibida`.
 
-Comprueba primero `backend/src/app.js`, `backend/src/routes/` y los controllers
-del último trabajo del Proveedor. En `frontend/.env.local`, asigna SOLO las
-rutas verificadas, relativas a `/api` (ejemplo sintáctico de ruta: `/segmento/ruta`,
-NO representa un endpoint existente):
+El botón de confirmar se muestra únicamente cuando `estado === 'Pendiente'`
+y `confirmada_proveedor === 0`. En caso de 403, 404, 409, 500 o 503 muestra
+el mensaje HTTP del backend. Las órdenes pertenecen al proveedor por el vínculo
+`usuario_proveedor` del JWT; no se puede elegir otro proveedor desde la URL.
 
-```env
-VITE_PROVEEDOR_PERFIL_RUTA=
-VITE_PROVEEDOR_ORDENES_RUTA=
-VITE_PROVEEDOR_DETALLE_RUTA=
-VITE_PROVEEDOR_CONFIRMAR_RUTA=
-VITE_PROVEEDOR_CONFIRMAR_METODO=
-```
+La recepción física de mercancía la hace el Administrador mediante su módulo
+de compras; este frontend no llama `/api/compras/:id/recibir` desde Proveedor.
 
-Las rutas de detalle/confirmación deben incluir `:id` o `{id}` para el número de
-orden y pertenecer al PORTAL, no al listado de compras global. Método de
-confirmación: solo `POST`, `PUT` o `PATCH`, exactamente el que acepte el backend.
-No se necesita incluir el usuario o id_proveedor: la API debe determinarlo desde
-JWT. El frontend **no** modifica existencias al confirmar como Proveedor.
+## Para probar con la cuenta del Proveedor
 
-La conexión usa `GET` para perfil y órdenes. Los resultados pueden ser arrays o
-objetos `{ordenes:[...]}`, `{data:{ordenes:[...]}}`, `{compras:[...]}`. El perfil
-admite `{proveedor:{razon_social, nit_rut, correo}}` o directamente la entidad.
-Si el contrato real es distinto hay que adaptar el mapeo a esos campos reales.
+1. Tener MariaDB encendido y backend del commit `6b2e660` o posterior en puerto 3000.
+   Es necesario haber aplicado la migración del acceso al Proveedor.
+2. Desde `frontend/` ejecutar `npm ci`, `npm run dev` y abrir la URL de Vite.
+3. Ingresar con `proveedor.1.test@controlstock.invalid` y la contraseña de prueba
+   configurada localmente (no está en este ZIP).
+4. Verificar que aparezca **Mi empresa** desde la API, abrir **Mis órdenes** y
+   visualizar productos/cantidad/costo/subtotal de una solicitud asignada.
+5. Confirmar una orden pendiente no confirmada y verificar el estado
+   `Confirmada por el proveedor`. El stock **no debe aumentar**.
+6. Ingresar como Administrador y registrar recepción física; comprobar que el
+   portal ahora muestra `Recibida por la ferretería` al actualizar.
+7. Probar una orden ajena o inexistente: el backend debe devolver 404.
 
-**Seguridad**: aunque el menú se filtra por rol, el servidor debe impedir
-accesos a recursos de otro proveedor (403/404) y a módulos administrativos.
-Nunca configurar estas variables con `/compras` global ni con URL externas.
+## Límites de verificación
 
-## Roles
-
-- Administrador: catálogo, compras, recepción, inventario, ventas, reportes.
-- Cajero: consulta de productos (sin costos internos) y ventas.
-- Proveedor: acceso limitado a su perfil, órdenes asignadas y confirmación SOLO
-  cuando el backend ofrezca y verifique las rutas propias.
-
-No se modificaron scripts ni archivos del backend y no se realizó Git push.
+Las pruebas automáticas del frontend son locales con respuestas HTTP simuladas.
+No hay acceso a la instancia MariaDB del equipo del usuario, por lo que la
+prueba integral real debe ejecutarse en ese computador. No se ha modificado
+`backend/`, SQL, `.env` personal ni se ha subido código a GitHub.

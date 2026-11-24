@@ -1,5 +1,5 @@
 import { getSession, logout } from '../services/api'
-import { esAdministrador, puedeVender, esProveedor, nombreRol } from '../services/permisos'
+import { esAdministrador, puedeVender, puedeGestionarProductos, esProveedor, nombreRol } from '../services/permisos'
 import {
   IconoLogo, IconoPanel, IconoEscaner, IconoCaja, IconoCamion,
   IconoReloj, IconoEscudo, IconoAyuda, IconoTienda,
@@ -10,7 +10,7 @@ const MENU = [
   { id: 'panel', titulo: 'Panel general', icono: IconoPanel, permitir: usuario => !esProveedor(usuario) },
   { id: 'consulta', titulo: 'Consultar productos', icono: IconoCaja, permitir: puedeVender },
   { id: 'mostrador', titulo: 'Ventas / Mostrador', icono: IconoEscaner, permitir: puedeVender },
-  { id: 'catalogo', titulo: 'Administrar catálogo', icono: IconoCaja, permitir: esAdministrador },
+  { id: 'catalogo', titulo: 'Gestión de productos', icono: IconoCaja, permitir: puedeGestionarProductos },
   { id: 'movimientos', titulo: 'Movimientos', icono: IconoReloj, permitir: esAdministrador },
   { id: 'reabastecimiento', titulo: 'Compras y proveedores', icono: IconoCamion, permitir: esAdministrador },
   { id: 'reportes', titulo: 'Reportes', icono: IconoPanel, permitir: esAdministrador },

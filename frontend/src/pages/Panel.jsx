@@ -16,8 +16,9 @@ export default function Panel({ ir }) {
   const bajos = alertas.filter(p => p.stock > 0)
   return <AppLayout pagina="panel" ir={ir}>
     <Cabecera eyebrow="PeakPerformers / Inventario en tiempo real" titulo={admin ? "Panel general" : "Consulta de existencias"}
-      texto={admin ? "Resumen del inventario real, con alertas y acceso a reabastecimiento." : "Precios y existencias de los productos activos, sin acceso a compras ni costos administrativos."}>
-      {admin && <button className="btn btn--primario" onClick={() => ir('reabastecimiento')}><IconoFlecha /> Ver reabastecimiento</button>}
+      texto={admin ? "Resumen del inventario real, con alertas y acceso a reabastecimiento." : "Consulta existencias, registra ventas y gestiona productos. Compras y proveedores están reservados al Administrador."}>
+      {admin ? <button className="btn btn--primario" onClick={() => ir('reabastecimiento')}><IconoFlecha /> Ver reabastecimiento</button> :
+        <button className="btn btn--primario" onClick={() => ir('catalogo')}>Gestionar productos</button>}
     </Cabecera>
     <Estado loading={loading} error={error} onRetry={reload}>
       <div className="stats">

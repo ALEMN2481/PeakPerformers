@@ -29,3 +29,10 @@ test('catálogo da de baja lógica por DELETE y no cambia stock por PUT', () => 
   assert.match(codigo, /method: 'DELETE'/)
   assert.doesNotMatch(codigo, /stock_actual: Number\(form\.stock_actual\)/)
 })
+
+test('catálogo usa endpoints de productos; no añade ruta nueva inventada', () => {
+  const codigo = read('pages/Catalogo.jsx')
+  assert.match(codigo, /api\(editId \? `\/productos\/\$\{editId\}` : '\/productos'/)
+  assert.match(codigo, /api\(`\/productos\/\$\{inactivar.id\}`/)
+  assert.doesNotMatch(codigo, /\/productos\/crear|\/productos\/inactivar/)
+})
