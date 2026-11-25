@@ -1,0 +1,1466 @@
+{
+  "nombre": "Catalogo de demostracion PeakPerformers",
+  "version": "2026-11",
+  "moneda": "COP",
+  "aviso": "Datos ficticios para pruebas academicas. Precios referenciales inventados, no son cotizaciones comerciales.",
+  "productos": [
+    {
+      "sku": "DEMO-FER-001",
+      "categoria": "Tornillería y fijaciones",
+      "nombre": "Clavos de acero 1 1/2 pulg x 100",
+      "descripcion": "Clavos de acero 1 1/2 pulg x 100. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 6200,
+      "precio_venta": 9500,
+      "stock_inicial": 35,
+      "stock_minimo": 12,
+      "unidad_medida": "caja",
+      "ubicacion_bodega": "A-01",
+      "especificaciones": {
+        "material": "acero",
+        "longitud": "1 1/2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-002",
+      "categoria": "Tornillería y fijaciones",
+      "nombre": "Clavos de acero 2 pulg x 100",
+      "descripcion": "Clavos de acero 2 pulg x 100. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 7000,
+      "precio_venta": 10900,
+      "stock_inicial": 6,
+      "stock_minimo": 12,
+      "unidad_medida": "caja",
+      "ubicacion_bodega": "A-01",
+      "especificaciones": {
+        "material": "acero",
+        "longitud": "2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-003",
+      "categoria": "Tornillería y fijaciones",
+      "nombre": "Clavos de acero 3 pulg x 100",
+      "descripcion": "Clavos de acero 3 pulg x 100. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 8500,
+      "precio_venta": 13200,
+      "stock_inicial": 0,
+      "stock_minimo": 10,
+      "unidad_medida": "caja",
+      "ubicacion_bodega": "A-01",
+      "especificaciones": {
+        "material": "acero",
+        "longitud": "3 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-004",
+      "categoria": "Tornillería y fijaciones",
+      "nombre": "Tornillo drywall 1 1/2 pulg x 100",
+      "descripcion": "Tornillo drywall 1 1/2 pulg x 100. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 8800,
+      "precio_venta": 13500,
+      "stock_inicial": 30,
+      "stock_minimo": 15,
+      "unidad_medida": "caja",
+      "ubicacion_bodega": "A-02",
+      "especificaciones": {
+        "tipo": "drywall",
+        "longitud": "1 1/2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-005",
+      "categoria": "Tornillería y fijaciones",
+      "nombre": "Tornillo para madera 2 pulg x 100",
+      "descripcion": "Tornillo para madera 2 pulg x 100. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 9200,
+      "precio_venta": 14900,
+      "stock_inicial": 7,
+      "stock_minimo": 12,
+      "unidad_medida": "caja",
+      "ubicacion_bodega": "A-02",
+      "especificaciones": {
+        "aplicacion": "madera",
+        "longitud": "2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-006",
+      "categoria": "Tornillería y fijaciones",
+      "nombre": "Tuerca hexagonal M8 x 50",
+      "descripcion": "Tuerca hexagonal M8 x 50. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 6400,
+      "precio_venta": 9900,
+      "stock_inicial": 18,
+      "stock_minimo": 10,
+      "unidad_medida": "paquete",
+      "ubicacion_bodega": "A-03",
+      "especificaciones": {
+        "diametro": "M8"
+      }
+    },
+    {
+      "sku": "DEMO-FER-007",
+      "categoria": "Tornillería y fijaciones",
+      "nombre": "Arandela plana 5/16 pulg x 50",
+      "descripcion": "Arandela plana 5/16 pulg x 50. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 4500,
+      "precio_venta": 7900,
+      "stock_inicial": 11,
+      "stock_minimo": 10,
+      "unidad_medida": "paquete",
+      "ubicacion_bodega": "A-03",
+      "especificaciones": {
+        "diametro": "5/16 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-008",
+      "categoria": "Tornillería y fijaciones",
+      "nombre": "Chazo plastico 1/4 pulg x 100",
+      "descripcion": "Chazo plastico 1/4 pulg x 100. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 7800,
+      "precio_venta": 12000,
+      "stock_inicial": 4,
+      "stock_minimo": 15,
+      "unidad_medida": "paquete",
+      "ubicacion_bodega": "A-04",
+      "especificaciones": {
+        "diametro": "1/4 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-009",
+      "categoria": "Tornillería y fijaciones",
+      "nombre": "Remache pop aluminio 1/8 pulg x 100",
+      "descripcion": "Remache pop aluminio 1/8 pulg x 100. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 9900,
+      "precio_venta": 15200,
+      "stock_inicial": 24,
+      "stock_minimo": 10,
+      "unidad_medida": "caja",
+      "ubicacion_bodega": "A-04",
+      "especificaciones": {
+        "material": "aluminio",
+        "diametro": "1/8 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-010",
+      "categoria": "Tornillería y fijaciones",
+      "nombre": "Grapas industriales 10 mm x 1000",
+      "descripcion": "Grapas industriales 10 mm x 1000. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 7500,
+      "precio_venta": 12000,
+      "stock_inicial": 14,
+      "stock_minimo": 8,
+      "unidad_medida": "caja",
+      "ubicacion_bodega": "A-05",
+      "especificaciones": {
+        "longitud": "10 mm"
+      }
+    },
+    {
+      "sku": "DEMO-FER-011",
+      "categoria": "Herramientas manuales",
+      "nombre": "Martillo de una 16 oz",
+      "descripcion": "Martillo de una 16 oz. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 19500,
+      "precio_venta": 30500,
+      "stock_inicial": 14,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "B-01",
+      "especificaciones": {
+        "peso": "16 onzas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-012",
+      "categoria": "Herramientas manuales",
+      "nombre": "Alicate universal 8 pulg",
+      "descripcion": "Alicate universal 8 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 16000,
+      "precio_venta": 25900,
+      "stock_inicial": 11,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "B-01",
+      "especificaciones": {
+        "longitud": "8 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-013",
+      "categoria": "Herramientas manuales",
+      "nombre": "Destornillador estrella PH2",
+      "descripcion": "Destornillador estrella PH2. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 6900,
+      "precio_venta": 11500,
+      "stock_inicial": 20,
+      "stock_minimo": 7,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "B-02",
+      "especificaciones": {
+        "punta": "PH2"
+      }
+    },
+    {
+      "sku": "DEMO-FER-014",
+      "categoria": "Herramientas manuales",
+      "nombre": "Destornillador plano 6 mm",
+      "descripcion": "Destornillador plano 6 mm. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 6900,
+      "precio_venta": 11500,
+      "stock_inicial": 15,
+      "stock_minimo": 7,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "B-02",
+      "especificaciones": {
+        "punta": "plana 6 mm"
+      }
+    },
+    {
+      "sku": "DEMO-FER-015",
+      "categoria": "Herramientas manuales",
+      "nombre": "Llave ajustable 10 pulg",
+      "descripcion": "Llave ajustable 10 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 25900,
+      "precio_venta": 39800,
+      "stock_inicial": 5,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "B-03",
+      "especificaciones": {
+        "longitud": "10 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-016",
+      "categoria": "Herramientas manuales",
+      "nombre": "Juego llaves Allen 9 piezas",
+      "descripcion": "Juego llaves Allen 9 piezas. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 14500,
+      "precio_venta": 23900,
+      "stock_inicial": 8,
+      "stock_minimo": 4,
+      "unidad_medida": "juego",
+      "ubicacion_bodega": "B-03",
+      "especificaciones": {
+        "piezas": "9"
+      }
+    },
+    {
+      "sku": "DEMO-FER-017",
+      "categoria": "Herramientas manuales",
+      "nombre": "Serrucho para madera 20 pulg",
+      "descripcion": "Serrucho para madera 20 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 21900,
+      "precio_venta": 35900,
+      "stock_inicial": 6,
+      "stock_minimo": 4,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "B-04",
+      "especificaciones": {
+        "longitud": "20 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-018",
+      "categoria": "Herramientas manuales",
+      "nombre": "Pinza de presion 10 pulg",
+      "descripcion": "Pinza de presion 10 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 23900,
+      "precio_venta": 39000,
+      "stock_inicial": 3,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "B-04",
+      "especificaciones": {
+        "longitud": "10 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-019",
+      "categoria": "Herramientas eléctricas",
+      "nombre": "Taladro percutor 1/2 pulg 650 W",
+      "descripcion": "Taladro percutor 1/2 pulg 650 W. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 139000,
+      "precio_venta": 199000,
+      "stock_inicial": 5,
+      "stock_minimo": 3,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "C-01",
+      "especificaciones": {
+        "potencia": "650 W",
+        "mandril": "1/2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-020",
+      "categoria": "Herramientas eléctricas",
+      "nombre": "Pulidora angular 4 1/2 pulg 850 W",
+      "descripcion": "Pulidora angular 4 1/2 pulg 850 W. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 159000,
+      "precio_venta": 239000,
+      "stock_inicial": 3,
+      "stock_minimo": 3,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "C-01",
+      "especificaciones": {
+        "potencia": "850 W",
+        "diametro": "4 1/2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-021",
+      "categoria": "Herramientas eléctricas",
+      "nombre": "Sierra caladora 500 W",
+      "descripcion": "Sierra caladora 500 W. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 153000,
+      "precio_venta": 229000,
+      "stock_inicial": 4,
+      "stock_minimo": 2,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "C-02",
+      "especificaciones": {
+        "potencia": "500 W"
+      }
+    },
+    {
+      "sku": "DEMO-FER-022",
+      "categoria": "Herramientas eléctricas",
+      "nombre": "Atornillador inalambrico 12 V",
+      "descripcion": "Atornillador inalambrico 12 V. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 169000,
+      "precio_venta": 249000,
+      "stock_inicial": 2,
+      "stock_minimo": 3,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "C-02",
+      "especificaciones": {
+        "voltaje": "12 V"
+      }
+    },
+    {
+      "sku": "DEMO-FER-023",
+      "categoria": "Herramientas eléctricas",
+      "nombre": "Pistola de calor 1500 W",
+      "descripcion": "Pistola de calor 1500 W. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 77000,
+      "precio_venta": 119000,
+      "stock_inicial": 4,
+      "stock_minimo": 2,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "C-03",
+      "especificaciones": {
+        "potencia": "1500 W"
+      }
+    },
+    {
+      "sku": "DEMO-FER-024",
+      "categoria": "Herramientas eléctricas",
+      "nombre": "Sierra circular 7 1/4 pulg",
+      "descripcion": "Sierra circular 7 1/4 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 289000,
+      "precio_venta": 419000,
+      "stock_inicial": 2,
+      "stock_minimo": 2,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "C-03",
+      "especificaciones": {
+        "disco": "7 1/4 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-025",
+      "categoria": "Herramientas eléctricas",
+      "nombre": "Lijadora orbital 220 W",
+      "descripcion": "Lijadora orbital 220 W. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 128000,
+      "precio_venta": 189000,
+      "stock_inicial": 1,
+      "stock_minimo": 2,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "C-04",
+      "especificaciones": {
+        "potencia": "220 W"
+      }
+    },
+    {
+      "sku": "DEMO-FER-026",
+      "categoria": "Electricidad",
+      "nombre": "Cable THHN calibre 12 x 100 m",
+      "descripcion": "Cable THHN calibre 12 x 100 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 189000,
+      "precio_venta": 279000,
+      "stock_inicial": 7,
+      "stock_minimo": 3,
+      "unidad_medida": "rollo",
+      "ubicacion_bodega": "D-01",
+      "especificaciones": {
+        "calibre": "12 AWG",
+        "longitud": "100 m"
+      }
+    },
+    {
+      "sku": "DEMO-FER-027",
+      "categoria": "Electricidad",
+      "nombre": "Cable THHN calibre 14 x 100 m",
+      "descripcion": "Cable THHN calibre 14 x 100 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 146000,
+      "precio_venta": 219000,
+      "stock_inicial": 6,
+      "stock_minimo": 3,
+      "unidad_medida": "rollo",
+      "ubicacion_bodega": "D-01",
+      "especificaciones": {
+        "calibre": "14 AWG",
+        "longitud": "100 m"
+      }
+    },
+    {
+      "sku": "DEMO-FER-028",
+      "categoria": "Electricidad",
+      "nombre": "Tomacorriente doble con polo a tierra",
+      "descripcion": "Tomacorriente doble con polo a tierra. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 12500,
+      "precio_venta": 19500,
+      "stock_inicial": 31,
+      "stock_minimo": 12,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "D-02",
+      "especificaciones": {
+        "tipo": "doble"
+      }
+    },
+    {
+      "sku": "DEMO-FER-029",
+      "categoria": "Electricidad",
+      "nombre": "Interruptor sencillo empotrable",
+      "descripcion": "Interruptor sencillo empotrable. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 7500,
+      "precio_venta": 12300,
+      "stock_inicial": 27,
+      "stock_minimo": 12,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "D-02",
+      "especificaciones": {
+        "tipo": "sencillo"
+      }
+    },
+    {
+      "sku": "DEMO-FER-030",
+      "categoria": "Electricidad",
+      "nombre": "Breaker monopolar 20 A",
+      "descripcion": "Breaker monopolar 20 A. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 24000,
+      "precio_venta": 37000,
+      "stock_inicial": 10,
+      "stock_minimo": 6,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "D-03",
+      "especificaciones": {
+        "corriente": "20 A"
+      }
+    },
+    {
+      "sku": "DEMO-FER-031",
+      "categoria": "Electricidad",
+      "nombre": "Cinta aislante negra 18 mm",
+      "descripcion": "Cinta aislante negra 18 mm. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 3200,
+      "precio_venta": 5900,
+      "stock_inicial": 42,
+      "stock_minimo": 15,
+      "unidad_medida": "rollo",
+      "ubicacion_bodega": "D-03",
+      "especificaciones": {
+        "ancho": "18 mm"
+      }
+    },
+    {
+      "sku": "DEMO-FER-032",
+      "categoria": "Electricidad",
+      "nombre": "Bombillo LED 9 W luz blanca",
+      "descripcion": "Bombillo LED 9 W luz blanca. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 5400,
+      "precio_venta": 9500,
+      "stock_inicial": 8,
+      "stock_minimo": 20,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "D-04",
+      "especificaciones": {
+        "potencia": "9 W"
+      }
+    },
+    {
+      "sku": "DEMO-FER-033",
+      "categoria": "Electricidad",
+      "nombre": "Canaleta PVC 20x12 mm x 2 m",
+      "descripcion": "Canaleta PVC 20x12 mm x 2 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 8200,
+      "precio_venta": 13700,
+      "stock_inicial": 18,
+      "stock_minimo": 8,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "D-04",
+      "especificaciones": {
+        "medida": "20x12 mm"
+      }
+    },
+    {
+      "sku": "DEMO-FER-034",
+      "categoria": "Plomería",
+      "nombre": "Tubo PVC presion 1/2 pulg x 3 m",
+      "descripcion": "Tubo PVC presion 1/2 pulg x 3 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 13500,
+      "precio_venta": 21200,
+      "stock_inicial": 16,
+      "stock_minimo": 8,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "E-01",
+      "especificaciones": {
+        "diametro": "1/2 pulgadas",
+        "longitud": "3 m"
+      }
+    },
+    {
+      "sku": "DEMO-FER-035",
+      "categoria": "Plomería",
+      "nombre": "Tubo PVC presion 3/4 pulg x 3 m",
+      "descripcion": "Tubo PVC presion 3/4 pulg x 3 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 18500,
+      "precio_venta": 28900,
+      "stock_inicial": 5,
+      "stock_minimo": 8,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "E-01",
+      "especificaciones": {
+        "diametro": "3/4 pulgadas",
+        "longitud": "3 m"
+      }
+    },
+    {
+      "sku": "DEMO-FER-036",
+      "categoria": "Plomería",
+      "nombre": "Codo PVC 90 grados 1/2 pulg",
+      "descripcion": "Codo PVC 90 grados 1/2 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 1500,
+      "precio_venta": 2800,
+      "stock_inicial": 55,
+      "stock_minimo": 20,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "E-02",
+      "especificaciones": {
+        "diametro": "1/2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-037",
+      "categoria": "Plomería",
+      "nombre": "Tee PVC 1/2 pulg",
+      "descripcion": "Tee PVC 1/2 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 1800,
+      "precio_venta": 3300,
+      "stock_inicial": 25,
+      "stock_minimo": 15,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "E-02",
+      "especificaciones": {
+        "diametro": "1/2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-038",
+      "categoria": "Plomería",
+      "nombre": "Union PVC 3/4 pulg",
+      "descripcion": "Union PVC 3/4 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 2200,
+      "precio_venta": 4100,
+      "stock_inicial": 17,
+      "stock_minimo": 12,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "E-02",
+      "especificaciones": {
+        "diametro": "3/4 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-039",
+      "categoria": "Plomería",
+      "nombre": "Llave de paso 1/2 pulg",
+      "descripcion": "Llave de paso 1/2 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 23800,
+      "precio_venta": 37900,
+      "stock_inicial": 7,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "E-03",
+      "especificaciones": {
+        "diametro": "1/2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-040",
+      "categoria": "Plomería",
+      "nombre": "Cinta teflon 1/2 pulg",
+      "descripcion": "Cinta teflon 1/2 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 1800,
+      "precio_venta": 3500,
+      "stock_inicial": 12,
+      "stock_minimo": 15,
+      "unidad_medida": "rollo",
+      "ubicacion_bodega": "E-03",
+      "especificaciones": {
+        "ancho": "1/2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-041",
+      "categoria": "Plomería",
+      "nombre": "Sifon flexible para lavamanos",
+      "descripcion": "Sifon flexible para lavamanos. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 8500,
+      "precio_venta": 14500,
+      "stock_inicial": 5,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "E-04",
+      "especificaciones": {
+        "uso": "lavamanos"
+      }
+    },
+    {
+      "sku": "DEMO-FER-042",
+      "categoria": "Materiales de construcción",
+      "nombre": "Cemento gris 50 kg",
+      "descripcion": "Cemento gris 50 kg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 27700,
+      "precio_venta": 34900,
+      "stock_inicial": 18,
+      "stock_minimo": 15,
+      "unidad_medida": "bulto",
+      "ubicacion_bodega": "F-01",
+      "especificaciones": {
+        "peso": "50 kg"
+      }
+    },
+    {
+      "sku": "DEMO-FER-043",
+      "categoria": "Materiales de construcción",
+      "nombre": "Arena lavada 40 kg",
+      "descripcion": "Arena lavada 40 kg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 8900,
+      "precio_venta": 14500,
+      "stock_inicial": 24,
+      "stock_minimo": 10,
+      "unidad_medida": "bulto",
+      "ubicacion_bodega": "F-01",
+      "especificaciones": {
+        "peso": "40 kg"
+      }
+    },
+    {
+      "sku": "DEMO-FER-044",
+      "categoria": "Materiales de construcción",
+      "nombre": "Grava triturada 40 kg",
+      "descripcion": "Grava triturada 40 kg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 9400,
+      "precio_venta": 15900,
+      "stock_inicial": 9,
+      "stock_minimo": 10,
+      "unidad_medida": "bulto",
+      "ubicacion_bodega": "F-01",
+      "especificaciones": {
+        "peso": "40 kg"
+      }
+    },
+    {
+      "sku": "DEMO-FER-045",
+      "categoria": "Materiales de construcción",
+      "nombre": "Bloque concreto numero 6",
+      "descripcion": "Bloque concreto numero 6. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 2300,
+      "precio_venta": 3600,
+      "stock_inicial": 95,
+      "stock_minimo": 40,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "F-02",
+      "especificaciones": {
+        "tipo": "numero 6"
+      }
+    },
+    {
+      "sku": "DEMO-FER-046",
+      "categoria": "Materiales de construcción",
+      "nombre": "Ladrillo tolete macizo",
+      "descripcion": "Ladrillo tolete macizo. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 1450,
+      "precio_venta": 2300,
+      "stock_inicial": 120,
+      "stock_minimo": 50,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "F-02",
+      "especificaciones": {
+        "tipo": "tolete"
+      }
+    },
+    {
+      "sku": "DEMO-FER-047",
+      "categoria": "Materiales de construcción",
+      "nombre": "Varilla corrugada 3/8 pulg x 6 m",
+      "descripcion": "Varilla corrugada 3/8 pulg x 6 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 15800,
+      "precio_venta": 24900,
+      "stock_inicial": 15,
+      "stock_minimo": 10,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "F-03",
+      "especificaciones": {
+        "diametro": "3/8 pulgadas",
+        "longitud": "6 m"
+      }
+    },
+    {
+      "sku": "DEMO-FER-048",
+      "categoria": "Materiales de construcción",
+      "nombre": "Malla electrosoldada 2 x 3 m",
+      "descripcion": "Malla electrosoldada 2 x 3 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 59000,
+      "precio_venta": 89000,
+      "stock_inicial": 3,
+      "stock_minimo": 4,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "F-03",
+      "especificaciones": {
+        "dimension": "2 x 3 m"
+      }
+    },
+    {
+      "sku": "DEMO-FER-049",
+      "categoria": "Materiales de construcción",
+      "nombre": "Cal hidratada 10 kg",
+      "descripcion": "Cal hidratada 10 kg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 7500,
+      "precio_venta": 12500,
+      "stock_inicial": 0,
+      "stock_minimo": 8,
+      "unidad_medida": "bulto",
+      "ubicacion_bodega": "F-04",
+      "especificaciones": {
+        "peso": "10 kg"
+      }
+    },
+    {
+      "sku": "DEMO-FER-050",
+      "categoria": "Pinturas y acabados",
+      "nombre": "Pintura vinilo interior blanca galon",
+      "descripcion": "Pintura vinilo interior blanca galon. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 44000,
+      "precio_venta": 69000,
+      "stock_inicial": 10,
+      "stock_minimo": 6,
+      "unidad_medida": "galon",
+      "ubicacion_bodega": "G-01",
+      "especificaciones": {
+        "color": "blanco",
+        "presentacion": "galon"
+      }
+    },
+    {
+      "sku": "DEMO-FER-051",
+      "categoria": "Pinturas y acabados",
+      "nombre": "Esmalte sintetico negro cuarto",
+      "descripcion": "Esmalte sintetico negro cuarto. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 15900,
+      "precio_venta": 25900,
+      "stock_inicial": 7,
+      "stock_minimo": 5,
+      "unidad_medida": "cuarto",
+      "ubicacion_bodega": "G-01",
+      "especificaciones": {
+        "color": "negro"
+      }
+    },
+    {
+      "sku": "DEMO-FER-052",
+      "categoria": "Pinturas y acabados",
+      "nombre": "Brocha profesional 2 pulg",
+      "descripcion": "Brocha profesional 2 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 5500,
+      "precio_venta": 9900,
+      "stock_inicial": 20,
+      "stock_minimo": 10,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "G-02",
+      "especificaciones": {
+        "ancho": "2 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-053",
+      "categoria": "Pinturas y acabados",
+      "nombre": "Rodillo felpa 9 pulg",
+      "descripcion": "Rodillo felpa 9 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 11500,
+      "precio_venta": 19000,
+      "stock_inicial": 10,
+      "stock_minimo": 6,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "G-02",
+      "especificaciones": {
+        "ancho": "9 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-054",
+      "categoria": "Pinturas y acabados",
+      "nombre": "Bandeja plastica para pintura",
+      "descripcion": "Bandeja plastica para pintura. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 6500,
+      "precio_venta": 11000,
+      "stock_inicial": 12,
+      "stock_minimo": 6,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "G-02",
+      "especificaciones": {
+        "material": "plastico"
+      }
+    },
+    {
+      "sku": "DEMO-FER-055",
+      "categoria": "Pinturas y acabados",
+      "nombre": "Espatula metalica 4 pulg",
+      "descripcion": "Espatula metalica 4 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 6200,
+      "precio_venta": 10500,
+      "stock_inicial": 8,
+      "stock_minimo": 6,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "G-03",
+      "especificaciones": {
+        "ancho": "4 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-056",
+      "categoria": "Pinturas y acabados",
+      "nombre": "Lija de agua grano 220",
+      "descripcion": "Lija de agua grano 220. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 1100,
+      "precio_venta": 2300,
+      "stock_inicial": 38,
+      "stock_minimo": 20,
+      "unidad_medida": "hoja",
+      "ubicacion_bodega": "G-03",
+      "especificaciones": {
+        "grano": "220"
+      }
+    },
+    {
+      "sku": "DEMO-FER-057",
+      "categoria": "Pinturas y acabados",
+      "nombre": "Sellador para paredes galon",
+      "descripcion": "Sellador para paredes galon. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 35800,
+      "precio_venta": 56900,
+      "stock_inicial": 2,
+      "stock_minimo": 5,
+      "unidad_medida": "galon",
+      "ubicacion_bodega": "G-04",
+      "especificaciones": {
+        "presentacion": "galon"
+      }
+    },
+    {
+      "sku": "DEMO-FER-058",
+      "categoria": "Abrasivos y corte",
+      "nombre": "Disco corte metal 4 1/2 pulg",
+      "descripcion": "Disco corte metal 4 1/2 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 3400,
+      "precio_venta": 6300,
+      "stock_inicial": 40,
+      "stock_minimo": 20,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "H-01",
+      "especificaciones": {
+        "diametro": "4 1/2 pulgadas",
+        "uso": "metal"
+      }
+    },
+    {
+      "sku": "DEMO-FER-059",
+      "categoria": "Abrasivos y corte",
+      "nombre": "Disco diamantado concreto 4 1/2 pulg",
+      "descripcion": "Disco diamantado concreto 4 1/2 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 16800,
+      "precio_venta": 28900,
+      "stock_inicial": 9,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "H-01",
+      "especificaciones": {
+        "diametro": "4 1/2 pulgadas",
+        "uso": "concreto"
+      }
+    },
+    {
+      "sku": "DEMO-FER-060",
+      "categoria": "Abrasivos y corte",
+      "nombre": "Hoja segueta bimetalica 12 pulg",
+      "descripcion": "Hoja segueta bimetalica 12 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 3800,
+      "precio_venta": 6700,
+      "stock_inicial": 23,
+      "stock_minimo": 10,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "H-02",
+      "especificaciones": {
+        "longitud": "12 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-061",
+      "categoria": "Abrasivos y corte",
+      "nombre": "Disco desbaste metal 4 1/2 pulg",
+      "descripcion": "Disco desbaste metal 4 1/2 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 5900,
+      "precio_venta": 9800,
+      "stock_inicial": 15,
+      "stock_minimo": 10,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "H-02",
+      "especificaciones": {
+        "uso": "metal"
+      }
+    },
+    {
+      "sku": "DEMO-FER-062",
+      "categoria": "Abrasivos y corte",
+      "nombre": "Lija para madera grano 80",
+      "descripcion": "Lija para madera grano 80. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 1100,
+      "precio_venta": 2200,
+      "stock_inicial": 12,
+      "stock_minimo": 20,
+      "unidad_medida": "hoja",
+      "ubicacion_bodega": "H-03",
+      "especificaciones": {
+        "grano": "80"
+      }
+    },
+    {
+      "sku": "DEMO-FER-063",
+      "categoria": "Abrasivos y corte",
+      "nombre": "Broca HSS metal 3/8 pulg",
+      "descripcion": "Broca HSS metal 3/8 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 12000,
+      "precio_venta": 19500,
+      "stock_inicial": 6,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "H-03",
+      "especificaciones": {
+        "diametro": "3/8 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-064",
+      "categoria": "Abrasivos y corte",
+      "nombre": "Broca HSS metal 1/4 pulg",
+      "descripcion": "Broca HSS metal 1/4 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 7600,
+      "precio_venta": 12500,
+      "stock_inicial": 4,
+      "stock_minimo": 6,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "H-03",
+      "especificaciones": {
+        "diametro": "1/4 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-065",
+      "categoria": "Seguridad industrial",
+      "nombre": "Guantes de carnaza reforzados",
+      "descripcion": "Guantes de carnaza reforzados. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 11500,
+      "precio_venta": 18900,
+      "stock_inicial": 21,
+      "stock_minimo": 10,
+      "unidad_medida": "par",
+      "ubicacion_bodega": "I-01",
+      "especificaciones": {
+        "material": "carnaza"
+      }
+    },
+    {
+      "sku": "DEMO-FER-066",
+      "categoria": "Seguridad industrial",
+      "nombre": "Gafas de seguridad transparentes",
+      "descripcion": "Gafas de seguridad transparentes. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 7800,
+      "precio_venta": 13500,
+      "stock_inicial": 13,
+      "stock_minimo": 8,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "I-01",
+      "especificaciones": {
+        "proteccion": "ocular"
+      }
+    },
+    {
+      "sku": "DEMO-FER-067",
+      "categoria": "Seguridad industrial",
+      "nombre": "Mascarilla N95 x 5",
+      "descripcion": "Mascarilla N95 x 5. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 11800,
+      "precio_venta": 19400,
+      "stock_inicial": 6,
+      "stock_minimo": 10,
+      "unidad_medida": "paquete",
+      "ubicacion_bodega": "I-02",
+      "especificaciones": {
+        "tipo": "N95"
+      }
+    },
+    {
+      "sku": "DEMO-FER-068",
+      "categoria": "Seguridad industrial",
+      "nombre": "Casco industrial blanco",
+      "descripcion": "Casco industrial blanco. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 18900,
+      "precio_venta": 31000,
+      "stock_inicial": 8,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "I-02",
+      "especificaciones": {
+        "color": "blanco"
+      }
+    },
+    {
+      "sku": "DEMO-FER-069",
+      "categoria": "Seguridad industrial",
+      "nombre": "Botas de caucho talla 40",
+      "descripcion": "Botas de caucho talla 40. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 35000,
+      "precio_venta": 54000,
+      "stock_inicial": 4,
+      "stock_minimo": 4,
+      "unidad_medida": "par",
+      "ubicacion_bodega": "I-03",
+      "especificaciones": {
+        "talla": "40"
+      }
+    },
+    {
+      "sku": "DEMO-FER-070",
+      "categoria": "Seguridad industrial",
+      "nombre": "Protector auditivo tipo copa",
+      "descripcion": "Protector auditivo tipo copa. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 23500,
+      "precio_venta": 38900,
+      "stock_inicial": 5,
+      "stock_minimo": 3,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "I-03",
+      "especificaciones": {
+        "proteccion": "auditiva"
+      }
+    },
+    {
+      "sku": "DEMO-FER-071",
+      "categoria": "Seguridad industrial",
+      "nombre": "Chaleco reflectivo naranja",
+      "descripcion": "Chaleco reflectivo naranja. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 16500,
+      "precio_venta": 26800,
+      "stock_inicial": 7,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "I-04",
+      "especificaciones": {
+        "color": "naranja"
+      }
+    },
+    {
+      "sku": "DEMO-FER-072",
+      "categoria": "Cerrajería",
+      "nombre": "Candado laminado 40 mm",
+      "descripcion": "Candado laminado 40 mm. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 15000,
+      "precio_venta": 24900,
+      "stock_inicial": 16,
+      "stock_minimo": 6,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "J-01",
+      "especificaciones": {
+        "ancho": "40 mm"
+      }
+    },
+    {
+      "sku": "DEMO-FER-073",
+      "categoria": "Cerrajería",
+      "nombre": "Cerradura de pomo para alcoba",
+      "descripcion": "Cerradura de pomo para alcoba. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 39500,
+      "precio_venta": 63900,
+      "stock_inicial": 8,
+      "stock_minimo": 4,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "J-01",
+      "especificaciones": {
+        "uso": "alcoba"
+      }
+    },
+    {
+      "sku": "DEMO-FER-074",
+      "categoria": "Cerrajería",
+      "nombre": "Bisagra acero 3 pulg x 2",
+      "descripcion": "Bisagra acero 3 pulg x 2. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 6000,
+      "precio_venta": 9900,
+      "stock_inicial": 22,
+      "stock_minimo": 10,
+      "unidad_medida": "par",
+      "ubicacion_bodega": "J-02",
+      "especificaciones": {
+        "longitud": "3 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-075",
+      "categoria": "Cerrajería",
+      "nombre": "Pasador de seguridad 4 pulg",
+      "descripcion": "Pasador de seguridad 4 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 12500,
+      "precio_venta": 20000,
+      "stock_inicial": 4,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "J-02",
+      "especificaciones": {
+        "longitud": "4 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-076",
+      "categoria": "Cerrajería",
+      "nombre": "Portacandado zincado 3 pulg",
+      "descripcion": "Portacandado zincado 3 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 7900,
+      "precio_venta": 13500,
+      "stock_inicial": 8,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "J-03",
+      "especificaciones": {
+        "longitud": "3 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-077",
+      "categoria": "Cerrajería",
+      "nombre": "Cilindro para cerradura 60 mm",
+      "descripcion": "Cilindro para cerradura 60 mm. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 27000,
+      "precio_venta": 43900,
+      "stock_inicial": 6,
+      "stock_minimo": 3,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "J-03",
+      "especificaciones": {
+        "longitud": "60 mm"
+      }
+    },
+    {
+      "sku": "DEMO-FER-078",
+      "categoria": "Jardinería",
+      "nombre": "Pala de punta mango madera",
+      "descripcion": "Pala de punta mango madera. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 30500,
+      "precio_venta": 46900,
+      "stock_inicial": 9,
+      "stock_minimo": 4,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "K-01",
+      "especificaciones": {
+        "mango": "madera"
+      }
+    },
+    {
+      "sku": "DEMO-FER-079",
+      "categoria": "Jardinería",
+      "nombre": "Rastrillo jardin 14 dientes",
+      "descripcion": "Rastrillo jardin 14 dientes. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 23500,
+      "precio_venta": 37900,
+      "stock_inicial": 7,
+      "stock_minimo": 4,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "K-01",
+      "especificaciones": {
+        "dientes": "14"
+      }
+    },
+    {
+      "sku": "DEMO-FER-080",
+      "categoria": "Jardinería",
+      "nombre": "Manguera jardin 1/2 pulg x 20 m",
+      "descripcion": "Manguera jardin 1/2 pulg x 20 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 45000,
+      "precio_venta": 72000,
+      "stock_inicial": 5,
+      "stock_minimo": 3,
+      "unidad_medida": "rollo",
+      "ubicacion_bodega": "K-02",
+      "especificaciones": {
+        "diametro": "1/2 pulgadas",
+        "longitud": "20 m"
+      }
+    },
+    {
+      "sku": "DEMO-FER-081",
+      "categoria": "Jardinería",
+      "nombre": "Tijeras para podar 8 pulg",
+      "descripcion": "Tijeras para podar 8 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 22000,
+      "precio_venta": 36500,
+      "stock_inicial": 6,
+      "stock_minimo": 4,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "K-02",
+      "especificaciones": {
+        "longitud": "8 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-082",
+      "categoria": "Jardinería",
+      "nombre": "Regadera plastica 10 litros",
+      "descripcion": "Regadera plastica 10 litros. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 17800,
+      "precio_venta": 29900,
+      "stock_inicial": 3,
+      "stock_minimo": 4,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "K-03",
+      "especificaciones": {
+        "capacidad": "10 L"
+      }
+    },
+    {
+      "sku": "DEMO-FER-083",
+      "categoria": "Jardinería",
+      "nombre": "Hilo nylon para guadana 2.4 mm",
+      "descripcion": "Hilo nylon para guadana 2.4 mm. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 14500,
+      "precio_venta": 24500,
+      "stock_inicial": 10,
+      "stock_minimo": 6,
+      "unidad_medida": "rollo",
+      "ubicacion_bodega": "K-03",
+      "especificaciones": {
+        "diametro": "2.4 mm"
+      }
+    },
+    {
+      "sku": "DEMO-FER-084",
+      "categoria": "Adhesivos y selladores",
+      "nombre": "Silicona neutra transparente 280 ml",
+      "descripcion": "Silicona neutra transparente 280 ml. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 17800,
+      "precio_venta": 28900,
+      "stock_inicial": 12,
+      "stock_minimo": 8,
+      "unidad_medida": "cartucho",
+      "ubicacion_bodega": "L-01",
+      "especificaciones": {
+        "volumen": "280 ml",
+        "color": "transparente"
+      }
+    },
+    {
+      "sku": "DEMO-FER-085",
+      "categoria": "Adhesivos y selladores",
+      "nombre": "Pegante PVC 1/4 galon",
+      "descripcion": "Pegante PVC 1/4 galon. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 24000,
+      "precio_venta": 38900,
+      "stock_inicial": 8,
+      "stock_minimo": 6,
+      "unidad_medida": "cuarto",
+      "ubicacion_bodega": "L-01",
+      "especificaciones": {
+        "uso": "PVC"
+      }
+    },
+    {
+      "sku": "DEMO-FER-086",
+      "categoria": "Adhesivos y selladores",
+      "nombre": "Adhesivo para ceramica 25 kg",
+      "descripcion": "Adhesivo para ceramica 25 kg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 24900,
+      "precio_venta": 38900,
+      "stock_inicial": 12,
+      "stock_minimo": 8,
+      "unidad_medida": "bulto",
+      "ubicacion_bodega": "L-02",
+      "especificaciones": {
+        "peso": "25 kg"
+      }
+    },
+    {
+      "sku": "DEMO-FER-087",
+      "categoria": "Adhesivos y selladores",
+      "nombre": "Epoxico dos componentes 25 ml",
+      "descripcion": "Epoxico dos componentes 25 ml. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 9800,
+      "precio_venta": 16500,
+      "stock_inicial": 4,
+      "stock_minimo": 6,
+      "unidad_medida": "kit",
+      "ubicacion_bodega": "L-02",
+      "especificaciones": {
+        "volumen": "25 ml"
+      }
+    },
+    {
+      "sku": "DEMO-FER-088",
+      "categoria": "Adhesivos y selladores",
+      "nombre": "Cinta enmascarar 24 mm x 40 m",
+      "descripcion": "Cinta enmascarar 24 mm x 40 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 4800,
+      "precio_venta": 8200,
+      "stock_inicial": 18,
+      "stock_minimo": 10,
+      "unidad_medida": "rollo",
+      "ubicacion_bodega": "L-03",
+      "especificaciones": {
+        "ancho": "24 mm"
+      }
+    },
+    {
+      "sku": "DEMO-FER-089",
+      "categoria": "Adhesivos y selladores",
+      "nombre": "Espuma expansiva poliuretano 500 ml",
+      "descripcion": "Espuma expansiva poliuretano 500 ml. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 28000,
+      "precio_venta": 44500,
+      "stock_inicial": 3,
+      "stock_minimo": 5,
+      "unidad_medida": "aerosol",
+      "ubicacion_bodega": "L-03",
+      "especificaciones": {
+        "volumen": "500 ml"
+      }
+    },
+    {
+      "sku": "DEMO-FER-090",
+      "categoria": "Adhesivos y selladores",
+      "nombre": "Sellador acrilico blanco 300 ml",
+      "descripcion": "Sellador acrilico blanco 300 ml. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 12300,
+      "precio_venta": 20500,
+      "stock_inicial": 10,
+      "stock_minimo": 6,
+      "unidad_medida": "cartucho",
+      "ubicacion_bodega": "L-04",
+      "especificaciones": {
+        "volumen": "300 ml"
+      }
+    },
+    {
+      "sku": "DEMO-FER-091",
+      "categoria": "Medición y nivelación",
+      "nombre": "Flexometro 5 m x 19 mm",
+      "descripcion": "Flexometro 5 m x 19 mm. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 10200,
+      "precio_venta": 17900,
+      "stock_inicial": 19,
+      "stock_minimo": 7,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "M-01",
+      "especificaciones": {
+        "longitud": "5 m"
+      }
+    },
+    {
+      "sku": "DEMO-FER-092",
+      "categoria": "Medición y nivelación",
+      "nombre": "Nivel burbuja aluminio 60 cm",
+      "descripcion": "Nivel burbuja aluminio 60 cm. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 28500,
+      "precio_venta": 45900,
+      "stock_inicial": 7,
+      "stock_minimo": 4,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "M-01",
+      "especificaciones": {
+        "longitud": "60 cm"
+      }
+    },
+    {
+      "sku": "DEMO-FER-093",
+      "categoria": "Medición y nivelación",
+      "nombre": "Escuadra carpintero 12 pulg",
+      "descripcion": "Escuadra carpintero 12 pulg. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 12800,
+      "precio_venta": 21800,
+      "stock_inicial": 9,
+      "stock_minimo": 5,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "M-02",
+      "especificaciones": {
+        "longitud": "12 pulgadas"
+      }
+    },
+    {
+      "sku": "DEMO-FER-094",
+      "categoria": "Medición y nivelación",
+      "nombre": "Metro plegable madera 2 m",
+      "descripcion": "Metro plegable madera 2 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 16900,
+      "precio_venta": 27900,
+      "stock_inicial": 5,
+      "stock_minimo": 4,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "M-02",
+      "especificaciones": {
+        "longitud": "2 m"
+      }
+    },
+    {
+      "sku": "DEMO-FER-095",
+      "categoria": "Medición y nivelación",
+      "nombre": "Calibrador pie de rey 150 mm",
+      "descripcion": "Calibrador pie de rey 150 mm. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 42500,
+      "precio_venta": 68500,
+      "stock_inicial": 2,
+      "stock_minimo": 3,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "M-03",
+      "especificaciones": {
+        "rango": "150 mm"
+      }
+    },
+    {
+      "sku": "DEMO-FER-096",
+      "categoria": "Medición y nivelación",
+      "nombre": "Cinta metrica fibra 30 m",
+      "descripcion": "Cinta metrica fibra 30 m. Articulo de demostracion de la ferreteria PeakPerformers.",
+      "precio_costo": 31500,
+      "precio_venta": 49900,
+      "stock_inicial": 4,
+      "stock_minimo": 3,
+      "unidad_medida": "unidad",
+      "ubicacion_bodega": "M-03",
+      "especificaciones": {
+        "longitud": "30 m"
+      }
+    }
+  ]
+}
