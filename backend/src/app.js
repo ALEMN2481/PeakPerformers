@@ -49,6 +49,9 @@ app.use((err, req, res, next) => {
     if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
         return res.status(400).json({ mensaje: "JSON invalido" });
     }
+    if (err.type === "entity.too.large") {
+        return res.status(413).json({ mensaje: "Cuerpo de la peticion demasiado grande" });
+    }
     console.error("Error no controlado:", err);
     return res.status(500).json({ mensaje: "Error interno del servidor" });
 });

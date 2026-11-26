@@ -2,6 +2,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../config/database");
 
+// Hash ficticio: se compara aunque la cuenta no exista, para no revelar correos por tiempo de respuesta.
+const HASH_FICTICIO = bcrypt.hashSync("controlstock-hash-ficticio", 10);
+
 const login = async (req, res) => {
     const { correo, contrasena } = req.body || {};
     if (typeof correo !== "string" || typeof contrasena !== "string" ||
@@ -14,7 +17,8 @@ const login = async (req, res) => {
             [correo.trim()]
         );
         const u = usuarios[0];
-        if (!u || Number(u.estado) !== 1 || !await bcrypt.compare(contrasena, u.contrasena_hash)) {
+        const claveValida = await bcrypt.compare(contrasena, u?.contrasena_hash || HASH_FICTICIO);
+        if (!u || Number(u.estado) !== 1 || !claveValida) {
             return res.status(401).json({ mensaje: "Credenciales invalidas" });
         }
         const token = jwt.sign({ sub: String(u.id_usuario) }, process.env.JWT_SECRET, {
