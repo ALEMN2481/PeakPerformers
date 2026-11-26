@@ -2,11 +2,16 @@
 const servicio = require("../services/productos.service");
 
 // Validar y preparar los datos
+// Solo número o texto numérico: evita que "", true o [5] se conviertan en 0/1/5 en silencio.
+const aNumero = (valor) =>
+    typeof valor === "number" || (typeof valor === "string" && /^\s*\d+(\.\d+)?\s*$/.test(valor))
+        ? Number(valor) : NaN;
+
 const validarProducto = (body) => {
-    const id_categoria = Number(body.id_categoria);
-    const precio_costo = Number(body.precio_costo);
-    const precio_venta = Number(body.precio_venta);
-    const stock_minimo = Number(body.stock_minimo ?? 0);
+    const id_categoria = aNumero(body.id_categoria);
+    const precio_costo = aNumero(body.precio_costo);
+    const precio_venta = aNumero(body.precio_venta);
+    const stock_minimo = aNumero(body.stock_minimo ?? 0);
 
     if (!Number.isSafeInteger(id_categoria) || id_categoria <= 0) {
         return { error: "Categoría inválida" };

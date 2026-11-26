@@ -6,6 +6,10 @@ const pool = require("./config/db");
 const PORT = process.env.PORT || 3000;
 
 async function iniciarServidor() {
+    if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 16) {
+        console.error("JWT_SECRET debe estar definido en backend/.env (minimo 16 caracteres)");
+        process.exit(1);
+    }
     try {
         const conexion = await pool.getConnection();
 
@@ -19,6 +23,7 @@ async function iniciarServidor() {
 
     } catch (error) {
         console.error("Error al conectar con MariaDB:", error.message);
+        process.exit(1);
     }
 }
 
