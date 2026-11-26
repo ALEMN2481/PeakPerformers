@@ -14,8 +14,8 @@ const columnas = {
 };
 
 async function main() {
-    if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 16) {
-        throw new Error('JWT_SECRET debe estar definido en backend/.env (mínimo 16 caracteres)');
+    if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+        throw new Error('JWT_SECRET debe estar definido en backend/.env (mínimo 32 caracteres)');
     }
     const [r] = await db.query('SELECT DATABASE() AS bd, VERSION() AS version');
     console.log(`Conectado a MariaDB (${r[0].bd})`);

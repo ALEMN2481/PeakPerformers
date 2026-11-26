@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 const db = require("./config/database");
 const authRoutes = require("./routes/auth.routes");
 const categoriasRoutes = require("./routes/categorias.routes");
@@ -12,18 +13,20 @@ const abastecimientoRoutes = require("./routes/abastecimiento.routes");
 const reportesRoutes = require("./routes/reportes.routes");
 const portalProveedorRoutes = require("./routes/portal-proveedor.routes");
 
+const { autenticar, soloAdministrador } = require("./middlewares/auth.middleware");
+
 const app = express();
-app.use(cors()); // Configurar origenes permitidos antes del despliegue.
+app.use(helmet());
+app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));
 app.use(express.json({ limit: "100kb" }));
 
 app.get("/", (req, res) => res.json({ mensaje: "API de ControlStock funcionando correctamente" }));
-app.get("/api/estado", (_req, res) => res.json({
-    aplicacion: "PeakPerformers / ControlStock",
-    version: "entrega-2026-11-19",
-    estado: "operativo",
-    modulos: ["categorias", "productos", "inventario", "proveedores", "compras", "ventas", "abastecimiento", "reportes", "portal-proveedor"]
-}));
-app.get("/api/test-db", async (req, res) => {
+app.get("/api/estado", (_req, res) => res.json({ estado: "operativo" }));
+
+// En desarrollo queda abierto para diagnosticar; en cualquier otro entorno solo el Administrador.
+const accesoDiagnostico = (req, res, next) => process.env.NODE_ENV === "development"
+    ? next() : autenticar(req, res, () => soloAdministrador(req, res, next));
+app.get("/api/test-db", accesoDiagnostico, async (req, res) => {
     try {
         const [rows] = await db.query("SELECT NOW() AS fecha");
         res.json({ mensaje: "Conexion con MariaDB exitosa", fecha: rows[0].fecha });
