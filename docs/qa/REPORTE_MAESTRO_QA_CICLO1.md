@@ -1,7 +1,7 @@
 # Reporte Maestro de QA — ControlStock · Ciclo 1
 
 **Proyecto:** ControlStock · PeakPerformers (ERS IEEE 830, RF01–RF06 / RNF01–RNF06)
-**Responsable QA:** RuseBeT_23 · **Última actualización:** 19/11/2026
+**Responsable QA:** RuseBeT_23 · **Última actualización:** 26/11/2026
 **Documento único:** reemplaza a `reporte_de_hallazgos_qa.md` (10–11/11), `reporte_revision_post_correccion_ciclo1.md` (12/11) y `reporte_avance_qa_2026-11-19.md` (19/11). Las versiones anteriores siguen en el historial de Git (commits `e361b78`, `acbd4a8` y `157de32`).
 
 **Leyenda de estado:**
@@ -72,8 +72,8 @@
 | BE-02 | Baja | RF02 | 🟡 Aceptado | Las alternativas se buscan por categoría, no por equivalencia técnica. La respuesta trae `advertencia` y existe `/productos/:id/especificaciones`. | Equivalencia técnica en un ciclo posterior. | Analista |
 | BE-03 | Media | RF01 | ❌ | Faltan `POST /auth/registro` y `/auth/recuperar`. | Implementarlos o documentar que el alta la hace el Administrador. | Backend + Analista |
 | BE-04 | Media | RF01 | ❌ | El login devuelve solo `{token, tipo, vence_en}`; `/auth/me` no incluye `nombre`. | Incluir `nombre` y `rol` en el login o en `/me` (ver CNT-01). | Backend |
-| BE-06 | Baja | RNF04 | 🟡 Parcial | `server.js` no valida `JWT_SECRET` ni sale con error si la BD falla al arrancar. Solo `preparar-pruebas.js` lo valida. | Validar al inicio y usar `process.exit(1)`. | Backend |
-| BE-07 | Baja | RNF02 | ❌ | El login no limita intentos y `cors()` está abierto. | Limitar intentos por IP y restringir los orígenes antes del despliegue. | Backend |
+| BE-06 | Baja | RNF04 | ✅ Cerrado 26/11 | `server.js` exige `JWT_SECRET` ≥ 32 caracteres y termina con código 1 si la BD falla (SEG-27). | — | — |
+| BE-07 | Baja | RNF02 | ✅ Cerrado 26/11 | Login limitado a 5 fallos / 15 min por IP (429) y CORS restringido a `FRONTEND_URL` (SEG-20, SEG-21, SEG-22). | Detrás de un proxy, configurar `trust proxy`. | Backend |
 | BE-08 | Baja | RF06 | ❌ | La baja lógica no guarda el motivo. | Agregar una columna o tabla de auditoría. | Backend |
 | BE-09 | Media | RNF02 | ❌ | El Cajero autenticado ve costos en `GET /compras`, `/abastecimiento/faltantes`, `/abastecimiento/vinculos` y `GET /productos` (`precio_costo`). | Usar `soloAdministrador` o la vista sin costos. | Backend |
 | BE-10 | Baja | RNF05 | ❌ | `reportes.controller.js` usa nombres de columna fijos (`total_venta`, `fecha_hora`, `precio_unitario`); `ventas.service.js` detecta variantes del esquema. | Usar el mismo detector de esquema o fijar uno solo. | Backend |
@@ -283,3 +283,74 @@
 2. **Frontend (J. P. Castillo):** corregir CNT-01, CNT-02, CNT-03 y CNT-10; luego CNT-04, CNT-11 y CNT-12. Ejecutar `npm run build` y `npm run lint` (E-06).
 3. **QA:** con la evidencia de E-05, pasar los casos 🟡 a ✅ o ❌ en este documento e iniciar las pruebas de interfaz de punta a punta.
 4. **Analista:** decidir BE-01 (¿la ubicación se ve solo con sesión?), BE-03 (alcance del registro) y BE-13.
+
+---
+
+## Ciclo 2: Ejecución de Pruebas Unitarias, Auditoría y Refuerzos de Seguridad
+
+**Fecha de Ejecución:** 26 de noviembre de 2026  
+**Rama de Trabajo:** `feature/unit-tests`  
+**Resultado Global:** **91/91 pruebas aprobadas (100 % de éxito): 63 backend + 28 frontend**
+
+### 1. Resumen de Resultados por Suite
+
+| Suite / Verificación | Total Casos | Aprobados | Fallidos | Observaciones |
+| :--- | :---: | :---: | :---: | :--- |
+| Análisis estático (`npm run check`) | 44 archivos | 44 | 0 | Sin errores de sintaxis en backend |
+| Backend — Pruebas previas | 26 | 26 | 0 | Suites base operativas |
+| Backend — Seguridad (`seguridad.test.js`) | 28 | 28 | 0 | RBAC (3 roles), JWT, SQLi, payloads, baja lógica; SEG-19 a SEG-27: Helmet, CORS, límite de login, solo HS256, endpoints públicos y `JWT_SECRET` ≥ 32 |
+| Backend — Reglas de negocio (`negocio.test.js`) | 9 | 9 | 0 | Atomicidad en ventas, stock mínimo y soft delete; NEG-10: orden BEGIN → FOR UPDATE → UPDATE → COMMIT |
+| Frontend — Pruebas unitarias | 28 | 28 | 0 | Componentes y flujos principales |
+| **Total Consolidado** | **91** | **91** | **0** | **0 defectos críticos abiertos en código** |
+
+---
+
+### 2. Defectos Detectados y Corregidos
+
+1. **Enumeración de usuarios por tiempo de respuesta (*Timing Attack*) — `auth.controller.js`**
+   * **Hallazgo:** El login omitía la comparación criptográfica cuando el correo no existía en la base de datos, permitiendo inferir cuentas registradas midiendo la latencia.
+   * **Corrección:** Se implementó una comparación contra un hash ficticio cuando el usuario no existe, igualando los tiempos de respuesta y retornando un mensaje genérico (`401 Credenciales inválidas`).
+2. **Coerción insegura de tipos numéricos — `productos.controller.js`**
+   * **Hallazgo:** Entradas como `""`, `true` o `[5]` eran convertidas implícitamente a `0`, `1` o `5` al crear o actualizar productos.
+   * **Corrección:** Se agregó validación estricta para aceptar únicamente números finitos o cadenas numéricas válidas.
+3. **Error interno `500` ante payloads sobredimensionados — `app.js`**
+   * **Hallazgo:** Peticiones JSON superiores a `100 KB` provocaban una excepción no controlada (`500 Internal Server Error`).
+   * **Corrección:** Se añadió manejo explícito del error `entity.too.large` respondiendo con estado HTTP `413` en formato JSON estructurado.
+4. **Arranque inseguro sin variables críticas (Cierre de BE-06) — `server.js`**
+   * **Corrección:** El servidor aborta el inicio si `JWT_SECRET` no está definido o no cumple la longitud mínima, y detiene el arranque con error explícito si falla la conexión inicial con MariaDB.
+
+---
+
+### 3. Refuerzos de Seguridad Aplicados (API y Base de Datos)
+
+#### Capa de Aplicación y Autenticación (Node.js / Express)
+* **Cabeceras HTTP (`helmet`):** Protección activa contra *Clickjacking*, *MIME-sniffing* y ocultamiento de la cabecera `X-Powered-By`. Prueba SEG-19.
+* **Política CORS estricta:** Origen restringido exclusivamente a la URL autorizada del frontend (`FRONTEND_URL`), bloqueando peticiones cruzadas desde dominios no confiables. Prueba SEG-20. **Cierra BE-07 (CORS).**
+* **Protección contra Fuerza Bruta (`express-rate-limit`):** Límite estricto en `/api/auth/login` (la API no usa el prefijo `/v1`) de máximo **5 intentos fallidos cada 15 minutos** por IP (respuesta HTTP `429`); los inicios de sesión correctos no consumen intentos. Pruebas SEG-21 y SEG-22. **Cierra BE-07 (fuerza bruta).**
+* **Endurecimiento de JWT:** Validación explícita del algoritmo de firma (`algorithms: ['HS256']`), expiración acotada (`8h`) y exigencia de secreto robusto (`>= 32` caracteres). Pruebas SEG-23 (HS384/HS512 → 401) y SEG-27 (`server.js` termina con código 1).
+* **Aislamiento de rutas de diagnóstico:** Restricción de `/api/test-db` y saneamiento de `/api/estado` para evitar fuga de información de infraestructura. `/api/test-db` exige token de Administrador salvo con `NODE_ENV=development`; `/api/estado` devuelve solo `{ "estado": "operativo" }`. Pruebas SEG-24, SEG-25 y SEG-26. **Cierra el hallazgo de endpoints públicos.**
+
+#### Capa de Persistencia (MariaDB)
+* **Consultas Parametrizadas:** 100 % de las sentencias SQL utilizan *prepared statements* (`?`), mitigando inyección SQL.
+* **Principio de Mínimo Privilegio:** Definición de usuario dedicado de aplicación (`controlstock_app`) con permisos limitados a DML (`SELECT, INSERT, UPDATE, DELETE, EXECUTE`), sin privilegios administrativos ni DDL (`DROP`, `ALTER`).
+* **Integridad y Concurrencia:** Reglas `CHECK (stock_actual >= 0)` a nivel de esquema y bloqueo transaccional de fila (`SELECT ... FOR UPDATE`) durante el procesamiento de ventas para evitar condiciones de carrera (*Race Conditions*).
+
+---
+
+### 4. Pendientes y Validaciones de Negocio
+
+* **Visibilidad de costos para rol `Cajero`:** Coherente con la unificación operativa del rol `Cajero` (mostrador + gestión de inventario), pendiente de validación formal con la Analista.
+* **Ubicación física en bodega (BE-01):** Pendiente incluir el campo `ubicacion_bodega` en la respuesta del endpoint de búsqueda rápida.
+
+### 5. Cierre de hallazgos (26/11/2026)
+
+| Hallazgo | Estado | Evidencia |
+| :--- | :--- | :--- |
+| Fuerza bruta en el login (BE-07) | ✅ Cerrado | `express-rate-limit` en `src/middlewares/limite-login.js`; SEG-21, SEG-22 |
+| CORS abierto (BE-07) | ✅ Cerrado | `cors({ origin: FRONTEND_URL \|\| 'http://localhost:5173' })`; SEG-20 |
+| Endpoints públicos `/api/test-db` y `/api/estado` | ✅ Cerrado | `app.js`; SEG-24, SEG-25, SEG-26 |
+| Arranque sin `JWT_SECRET` robusto (BE-06) | ✅ Cerrado | `server.js`; SEG-27 |
+| Ubicación en la búsqueda (BE-01) | ❌ Abierto | Pendiente de backend y decisión de la Analista |
+| Costos visibles para el Cajero | 🟡 En análisis | Pendiente de validación con la Analista |
+
+**Defectos del ciclo:** 7 reportados, 5 corregidos y 2 en proceso. Casos con incidencia: 3 de 91 (3,3 %): SEG-10, SEG-15 y SEG-16, todos corregidos.

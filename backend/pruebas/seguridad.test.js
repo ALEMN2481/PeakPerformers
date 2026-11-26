@@ -6,7 +6,7 @@ const path = require('node:path');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-const SECRETO = 'secreto-de-prueba-qa-123456';
+const SECRETO = 'secreto-de-prueba-qa-con-32-caracteres-o-mas';
 process.env.JWT_SECRET = SECRETO;
 
 const HASH = bcrypt.hashSync('ClaveCorrecta1', 4);
@@ -54,11 +54,14 @@ const app = require('../src/app');
 let base;
 let servidor;
 test.before(async () => {
-    servidor = app.listen(0);
+    servidor = app.listen(0, '127.0.0.1');
     await new Promise(r => servidor.once('listening', r));
     base = `http://127.0.0.1:${servidor.address().port}/api`;
 });
 test.after(() => servidor.close());
+// Cada prueba empieza con el contador de intentos de login en cero.
+const limiteLogin = require('../src/middlewares/limite-login');
+test.beforeEach(() => limiteLogin.resetKey('127.0.0.1'));
 
 const token = (sub, opciones = {}, secreto = SECRETO) =>
     jwt.sign({ sub: String(sub) }, secreto, { algorithm: 'HS256', issuer: 'controlstock', expiresIn: '1h', ...opciones });
@@ -254,4 +257,76 @@ test('NEG-01 DELETE /productos/:id hace baja lógica (UPDATE estado=0), nunca DE
     assert.equal(r.status, 200);
     assert.ok(consultas.some(c => /^UPDATE producto SET estado = 0 WHERE id_producto = \? AND estado = 1/.test(c.sql)));
     assert.ok(!consultas.some(c => /DELETE\s+FROM/i.test(c.sql)));
+});
+
+// --- A05 Configuración: Helmet, CORS, endpoints públicos ---
+test('SEG-19 Helmet: cabeceras de seguridad presentes y sin X-Powered-By', async () => {
+    const r = await fetch(base + '/estado');
+    assert.equal(r.headers.get('x-content-type-options'), 'nosniff');
+    assert.ok(r.headers.get('content-security-policy'));
+    assert.ok(r.headers.get('strict-transport-security'));
+    assert.equal(r.headers.get('x-powered-by'), null);
+});
+
+test('SEG-20 CORS solo admite el origen del frontend', async () => {
+    const permitido = await fetch(base + '/estado', { headers: { origin: 'http://localhost:5173' } });
+    assert.equal(permitido.headers.get('access-control-allow-origin'), 'http://localhost:5173');
+    const ajeno = await fetch(base + '/estado', { headers: { origin: 'http://atacante.test' } });
+    assert.notEqual(ajeno.headers.get('access-control-allow-origin'), 'http://atacante.test');
+    assert.notEqual(ajeno.headers.get('access-control-allow-origin'), '*');
+});
+
+test('SEG-21 login: el 6.º intento fallido en 15 minutos responde 429, incluso con la clave correcta', async () => {
+    const mala = { correo: 'admin@qa.test', contrasena: 'Mala' };
+    for (let i = 1; i <= 5; i++) {
+        assert.equal((await llamar('POST', '/auth/login', { body: mala })).status, 401, `intento ${i}`);
+    }
+    const sexto = await llamar('POST', '/auth/login', { body: mala });
+    assert.equal(sexto.status, 429);
+    assert.match(sexto.json.mensaje, /Demasiados intentos/);
+    const correcta = await llamar('POST', '/auth/login', { body: { correo: 'admin@qa.test', contrasena: 'ClaveCorrecta1' } });
+    assert.equal(correcta.status, 429, 'el bloqueo también frena a quien adivina la clave');
+});
+
+test('SEG-22 login: los inicios de sesión correctos no consumen intentos', async () => {
+    const buena = { correo: 'admin@qa.test', contrasena: 'ClaveCorrecta1' };
+    for (let i = 1; i <= 7; i++) assert.equal((await llamar('POST', '/auth/login', { body: buena })).status, 200);
+});
+
+test('SEG-23 JWT: solo HS256; un token HS384/HS512 con la misma clave → 401', async () => {
+    for (const algorithm of ['HS384', 'HS512']) {
+        const t = jwt.sign({ sub: '1' }, SECRETO, { algorithm, issuer: 'controlstock', expiresIn: '1h' });
+        assert.equal((await llamar('GET', '/auth/me', { tk: t })).status, 401, algorithm);
+    }
+});
+
+test('SEG-24 /api/estado no expone versión, módulos ni detalles internos', async () => {
+    assert.deepEqual((await llamar('GET', '/estado')).json, { estado: 'operativo' });
+});
+
+test('SEG-25 /api/test-db: 401 sin token, 403 Cajero/Proveedor, permitido al Administrador', async () => {
+    assert.equal((await llamar('GET', '/test-db')).status, 401);
+    assert.equal((await llamar('GET', '/test-db', { tk: CAJERO })).status, 403);
+    assert.equal((await llamar('GET', '/test-db', { tk: PROVEEDOR })).status, 403);
+    assert.ok(![401, 403].includes((await llamar('GET', '/test-db', { tk: ADMIN })).status));
+});
+
+test('SEG-26 /api/test-db queda abierto solo con NODE_ENV=development', async () => {
+    const anterior = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+    try {
+        assert.ok(![401, 403].includes((await llamar('GET', '/test-db')).status));
+    } finally {
+        if (anterior === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = anterior;
+    }
+});
+
+test('SEG-27 server.js no arranca con JWT_SECRET ausente o menor de 32 caracteres', () => {
+    const { spawnSync } = require('node:child_process');
+    for (const secreto of ['', 'x'.repeat(31)]) {
+        const r = spawnSync(process.execPath, ['src/server.js'], { cwd: path.resolve(__dirname, '..'),
+            env: { ...process.env, JWT_SECRET: secreto }, encoding: 'utf8', timeout: 10000 });
+        assert.equal(r.status, 1, `longitud ${secreto.length}`);
+        assert.match(r.stderr, /minimo 32 caracteres/);
+    }
 });

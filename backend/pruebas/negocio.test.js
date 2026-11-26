@@ -96,3 +96,14 @@ test('NEG-09 ninguna consulta del backend borra productos físicamente', () => {
         assert.doesNotMatch(fs.readFileSync(path.join(dir, f), 'utf8'), /DELETE\s+FROM\s+`?producto`?\b/i, f);
     }
 });
+
+test('NEG-10 venta: BEGIN → SELECT … FOR UPDATE → UPDATE stock → COMMIT, en ese orden', async () => {
+    stockBD = { 1: '4.000' };
+    await ventas.registrar(2, [{ id_producto: 1, cantidad: 1 }], 'Efectivo');
+    const i = (pred) => registro.findIndex(pred);
+    const begin = i(s => s === 'BEGIN');
+    const bloqueo = i(s => /SELECT[\s\S]*FROM producto[\s\S]*FOR UPDATE/.test(s));
+    const descuento = i(s => s.startsWith('UPDATE producto SET stock_actual'));
+    const commit = i(s => s === 'COMMIT');
+    assert.ok(begin === 0 && begin < bloqueo && bloqueo < descuento && descuento < commit, JSON.stringify({ begin, bloqueo, descuento, commit }));
+});
